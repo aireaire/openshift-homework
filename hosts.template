@@ -1,0 +1,38 @@
+[OSEv3:children]
+lb
+masters
+etcd
+nodes
+nfs
+
+[lb]
+loadbalancer1.${GUID}.internal
+
+[masters]
+master1.${GUID}.internal
+master2.${GUID}.internal
+master3.${GUID}.internal
+
+[etcd]
+master1.${GUID}.internal
+master2.${GUID}.internal
+master3.${GUID}.internal
+
+[nodes]
+## These are the masters
+master1.${GUID}.internal openshift_node_group_name='node-config-master' openshift_node_problem_detector_install=true
+master2.${GUID}.internal openshift_node_group_name='node-config-master' openshift_node_problem_detector_install=true
+master3.${GUID}.internal openshift_node_group_name='node-config-master' openshift_node_problem_detector_install=true
+
+## These are infranodes
+infranode1.${GUID}.internal openshift_node_group_name='node-config-infra' openshift_node_problem_detector_install=true
+infranode2.${GUID}.internal openshift_node_group_name='node-config-infra' openshift_node_problem_detector_install=true
+
+## These are regular nodes
+node1.${GUID}.internal openshift_node_group_name='node-config-compute' openshift_node_problem_detector_install=true
+node2.${GUID}.internal openshift_node_group_name='node-config-compute' openshift_node_problem_detector_install=true
+node3.${GUID}.internal openshift_node_group_name='node-config-compute' openshift_node_problem_detector_install=true
+node4.${GUID}.internal openshift_node_group_name='node-config-compute' openshift_node_problem_detector_install=true
+
+[nfs]
+support1.${GUID}.internal
