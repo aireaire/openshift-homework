@@ -61,8 +61,15 @@ echo "Export GUID"
 #ansible localhost,all -m shell -a 'export GUID=`hostname | cut -d"." -f2`; echo "export GUID=$GUID" >> $HOME/.bashrc'
 export GUID=$MY_GUID
 
-# if [ "$ACTION" == "REINSTALL" ]; then
-#     ansible-playbook "$OPENSHIFT_ANSIBLE_PATH/playbooks/adhoc/uninstall.yml"
-#     ansible nodes -a "rm -rf /etc/origin"
-#     ansible nfs -a "rm -rf /srv/nfs/*"
-# fi
+if [ "$ACTION" == "REINSTALL" ]; then
+    ansible-playbook "$OPENSHIFT_ANSIBLE_PATH/playbooks/adhoc/uninstall.yml"
+    ansible nodes -a "rm -rf /etc/origin"
+    ansible nfs -a "rm -rf /srv/nfs/*"
+fi
+
+ansible-playbook "$OPENSHIFT_ANSIBLE_PATH/playbooks/prerequisites.yml" \
+--extra-vars "OREG_AUTH_USER=$OREG_USER OREG_AUTH_PASS=$OREG_PASS"
+
+ansible-playbook "$OPENSHIFT_ANSIBLE_PATH/playbooks/deploy_cluster.yml" \
+--extra-vars "OREG_AUTH_USER=$OREG_USER OREG_AUTH_PASS=$OREG_PASS"
+
