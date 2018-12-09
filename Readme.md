@@ -64,6 +64,9 @@ openshift_hosted_registry_storage_volume_size: 20Gi
 
 - ### Router is configured on each infranode
 Specify infranodes label in router node selector
+
+NOTE: the OpenShift cluster POC for MitziCom is created with pre-defined users from httpasswd.openshift file. This is configured by the following group variables in `/etc/ansible/group_vars/OSEv3.yaml`:
+
 ```yaml
 # file: group_vars/OSEv3.yaml
 
@@ -291,7 +294,6 @@ openshift_metrics_cassandra_nodeselector:
 openshift_metrics_heapster_nodeselector:
   "node-role.kubernetes.io/infra": "true"
 ```
-
 ## CICD Workflow
 - ### Jenkins pod is running with a persistent volume
 
