@@ -86,6 +86,7 @@ The default label `node-role.kubernetes.io/infra=true` for `'node-config-infra'`
 For more details see [configuring inventory node group definitions](https://docs.openshift.com/container-platform/3.10/install/configuring_inventory_file.html#configuring-inventory-node-group-definitions) documentation.
 - ### PVs of different types are available for users to consume
 
+
 - ### Ability to deploy a simple app (**nodejs-mongo-persistent**)
 
 ## HA requirements
