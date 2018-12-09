@@ -4,7 +4,7 @@ OPENSHIFT_ANSIBLE_PATH=/usr/share/ansible/openshift-ansible
 
 usage()
 {
-  echo "Usage: $0 -g GUID"
+  echo "Usage: $0 -g GUID -u OREG_USER -p OREG_PASS"
   exit 2
 }
 
@@ -25,15 +25,26 @@ set_variable()
 
 unset MY_GUID ACTION
 
-while getopts 'gr:?h' c
+while getopts 'g:p:u:r?h' c
 do
   case $c in
-  	r) set_variable ACTION REINSTALL ;;
+    r) set_variable ACTION REINSTALL ;;
+    u) set_variable OREG_USER $OPTARG ;;
+    p) set_variable OREG_PASS $OPTARG ;;
     g) set_variable MY_GUID $OPTARG ;;
     h|?) usage ;; esac
 done
 
 [ -z "$MY_GUID" ] && usage
+if [ -z "$OREG_USER"]; then
+    usage
+else
+    echo "Supplied user for registry authentication: $OREG_USER"
+fi
+
+if [ -z "$OREG_PASS"]; then
+    usage
+fi
 
 echo "Updating hosts file with GUID=$MY_GUID"
 sed "s/\${GUID}/$MY_GUID/" hosts.template > hosts
@@ -50,8 +61,8 @@ echo "Export GUID"
 #ansible localhost,all -m shell -a 'export GUID=`hostname | cut -d"." -f2`; echo "export GUID=$GUID" >> $HOME/.bashrc'
 export GUID=$MY_GUID
 
-if [ "$ACTION" == "REINSTALL" ]; then
-	ansible-playbook "$OPENSHIFT_ANSIBLE_PATH/playbooks/adhoc/uninstall.yml"
-	ansible nodes -a "rm -rf /etc/origin"
-	ansible nfs -a "rm -rf /srv/nfs/*"
-fi
+# if [ "$ACTION" == "REINSTALL" ]; then
+#     ansible-playbook "$OPENSHIFT_ANSIBLE_PATH/playbooks/adhoc/uninstall.yml"
+#     ansible nodes -a "rm -rf /etc/origin"
+#     ansible nfs -a "rm -rf /srv/nfs/*"
+# fi
