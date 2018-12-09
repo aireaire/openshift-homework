@@ -76,10 +76,10 @@ oreg_auth_password: "{{ OREG_AUTH_PASS }}"
 # For Operator Framework Images
 # openshift_additional_registry_credentials:
 openshift_additional_registry_credentials:
-  - 'host':'registry.connect.redhat.com'
-    'user':"{{ OREG_AUTH_USER }}"
-    'password':"{{ OREG_AUTH_PASS }}"
-    'test_image':'mongodb/enterprise-operator:0.3.2'
+  - host: 'registry.connect.redhat.com'
+    user: "{{ OREG_AUTH_USER }}"
+    password: "{{ OREG_AUTH_PASS }}"
+    test_image: 'mongodb/enterprise-operator:0.3.2'
 
 openshift_examples_modify_imagestreams: true
 
