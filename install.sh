@@ -42,7 +42,7 @@ else
     echo "Supplied user for registry authentication: $OREG_USER"
 fi
 
-if [ -z "$OREG_PASS"]; then
+if [ -z "$OREG_PASS" ]; then
     usage
 fi
 
