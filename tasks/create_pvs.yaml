@@ -1,8 +1,10 @@
 ---
 - name: create persistent volumes
-  file:
-    path: "/srv/nfs/user-vols/pv{{item}}"
-    state: directory
-    mode: 0775
-    recurse: yes
-  loop: "range(0,200 + 1| list)"
+  hosts: nfs
+  tasks:
+    file:
+      path: "/srv/nfs/user-vols/pv{{item}}"
+      state: directory
+      mode: 0775
+      recurse: yes
+    loop: "range(0,200 + 1| list)"

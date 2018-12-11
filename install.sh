@@ -68,8 +68,8 @@ if [ "$ACTION" == "REINSTALL" ]; then
 fi
 
 ansible-playbook "$OPENSHIFT_ANSIBLE_PATH/playbooks/prerequisites.yml" \
---extra-vars "OREG_AUTH_USER=$OREG_USER OREG_AUTH_PASS=$OREG_PASS"
-
-ansible-playbook "$OPENSHIFT_ANSIBLE_PATH/playbooks/deploy_cluster.yml" \
---extra-vars "OREG_AUTH_USER=$OREG_USER OREG_AUTH_PASS=$OREG_PASS"
+--extra-vars "OREG_AUTH_USER=$OREG_USER OREG_AUTH_PASS=$OREG_PASS" \
+&& ansible-playbook "$OPENSHIFT_ANSIBLE_PATH/playbooks/deploy_cluster.yml" \
+--extra-vars "OREG_AUTH_USER=$OREG_USER OREG_AUTH_PASS=$OREG_PASS" \
+&& ansible masters[0] -b -m fetch -a "src=/root/.kube/config dest=/root/.kube/config flat=yes"
 
