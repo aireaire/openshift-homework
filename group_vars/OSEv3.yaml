@@ -237,8 +237,10 @@ openshift_logging_eventrouter_nodeselector:
 ###########################################################################
 
 # default selectors for router and registry services
-# openshift_router_selector: 'node-role.kubernetes.io/infra: true'
-# openshift_registry_selector: 'node-role.kubernetes.io/infra: true'
+# openshift_router_selector:
+#   "node-role.kubernetes.io/infra": "true"
+# openshift_registry_selector:
+#   "node-role.kubernetes.io/infra": "true"
 
 openshift_hosted_router_replicas: 2
 
