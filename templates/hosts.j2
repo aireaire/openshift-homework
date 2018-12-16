@@ -6,7 +6,7 @@ nodes
 nfs
 
 [lb]
-loadbalancer1.{{ GUID }}.internal
+loadbalancer1.{{ GUID | lookup('env', 'GUID') }}.internal
 
 [masters]
 master1.{{ GUID }}.internal
