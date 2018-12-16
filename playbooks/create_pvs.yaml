@@ -1,7 +1,7 @@
 ---
-- name: create persistent volumes
-  hosts: nfs
+- hosts: nfs
   tasks:
+    name: create persistent volumes
     file:
       path: "/srv/nfs/user-vols/pv{{item}}"
       state: directory
