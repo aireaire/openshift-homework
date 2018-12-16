@@ -71,7 +71,7 @@ openshift_router_selector:
   "node-role.kubernetes.io/infra": "true"
 
 # this also defines number of pods for router instances
-openshift_hosted_router_replicas=2
+openshift_hosted_router_replicas: 2
 ```
 
 NOTE: If you're going to use default label for infra nodes as in the example above, you actually don't have to specify it, as it is set by OpenShift ansible deployer. See below:
@@ -115,7 +115,7 @@ master3.GUID.internal openshift_node_group_name='node-config-master'
 ...
 ```
 
-Also in the `group_vars/OSEv3.yaml` define variables to set up users for the OpneShift cluster:
+Also specify HTPasswd identity provider to import users for the cluster in group variables file `group_vars/OSEv3.yaml`:
 
 ```yaml
 # file: group_vars/OSEv3.yaml
@@ -123,12 +123,10 @@ Also in the `group_vars/OSEv3.yaml` define variables to set up users for the Opn
 openshift_master_identity_providers: [{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider'}]
 openshift_master_htpasswd_file: /root/htpasswd.openshift
 ```
-
-Refer to [Configuring authentication and user agent](https://docs.openshift.com/container-platform/3.11/install_config/configuring_authentication.html) OpenShift documentation if you want to use other identity provider.
-
+More information on how to create your custom HTPasswd file or use different identity provider, e.g LDAP, see  [Configuring authentication and user agent](https://docs.openshift.com/container-platform/3.11/install_config/configuring_authentication.html) OpenShift documentation.
 
 - ### There are three etcd instances working
-Like with masters, for etcd instances one should create **etcd** group in the hosts inventory file. Use same nodes as in **masters** group for etcd instances.
+Like with masters, for etcd instances create **etcd** group in the hosts inventory file. Use same nodes as for **masters** group.
 
 ```ini
 # file /etc/ansible/hosts
