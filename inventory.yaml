@@ -1,7 +1,20 @@
-- name: Generate inventory
+---
+- hosts: localhost
   vars:
     ANSIBLE_CONFIG_ROOT: '/etc/ansible'
-    GUID: {{ lookup('env', 'GUID') }}
-  template:
-    src: hosts.j2
-    dest: "{{ANSIBLE_CONFIG_ROOT}}/hosts"
+    GUID: "{{ lookup('env', 'GUID') }}"
+  tasks:
+    - name: Generate inventory
+      template:
+        src: hosts.j2
+        dest: "{{ANSIBLE_CONFIG_ROOT}}/hosts"
+        backup: yes
+    - name: Make sure /etc/ansible/group_vars exist
+      file:
+        path: /etc/ansible/group_vars
+        state: directory
+    - name: create OSEv3 group vars
+      copy:
+        src: resources/OSEv3.yaml
+        dest: /etc/ansible/group_vars/OSEv3.yaml
+        backup: yes

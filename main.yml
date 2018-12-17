@@ -1,12 +1,31 @@
 ---
 # Deploys demo cluster for MitziCom
-- name: Install OpenShift Ansible Deployer
+- name: Setup bastion host
   hosts: localhost
   tasks:
-    yum:
-      name:
-        - atomic-openshift-client
-        - openshift-ansible
-      state: present
+    - name: install yum packages
+      yum:
+        name:
+          - atomic-openshift-clients
+          - openshift-ansible
+        state: present
+    - name: download openshift applier
+      git:
+        repo: https://github.com/redhat-cop/openshift-applier.git
+        dest: openshift-applier
+        version: v3.9.1
+    - name: create 'roles' directory
+      file:
+        path: roles
+        state: directory
+    - name: copy openshift applier roles
+      shell: cp -rf openshift-applier/roles/openshift-applier roles/ && rm -rf openshift-applier
 
+- name: Define inventory and group vars for OpnenShift Ansible Deployer
+  import_playbook: inventory.yaml
 
+- name: Install prerequisites
+  import_playbook: /usr/share/ansible/openshift-ansible/playbooks/prerequisites.yml
+
+- name: Deploy cluster
+  import_playbook: /usr/share/ansible/openshift-ansible/playbooks/deploy_cluster.yml
