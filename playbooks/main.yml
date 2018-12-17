@@ -1,9 +1,12 @@
 ---
 # Deploys demo cluster for MitziCom
 - name: Install OpenShift Ansible Deployer
+  hosts: localhost
   tasks:
     yum:
-      name: "atomic-openshift-client, openshift-ansible"
+      name:
+        - atomic-openshift-client
+        - openshift-ansible
       state: present
 
 

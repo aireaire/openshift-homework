@@ -1,7 +1,7 @@
 - name: Generate inventory
   vars:
-    ANSIBLE_CONFIG_ROOT: {{ default('/etc/ansible') }}
-    GUID: {{ default(lookup('env', 'GUID')) }}
+    ANSIBLE_CONFIG_ROOT: '/etc/ansible'
+    GUID: {{ lookup('env', 'GUID') }}
   template:
     src: hosts.j2
     dest: "{{ANSIBLE_CONFIG_ROOT}}/hosts"
