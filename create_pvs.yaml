@@ -13,5 +13,5 @@
         content:
           - name: Create Persistent Volume
             template: templates/pv_template.yaml
-            params_from_vars:
-              volume_var: "{{ item }}"
+            params: resources/create_pvs_params.yaml
+
