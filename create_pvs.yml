@@ -1,10 +1,12 @@
 ---
 - name: create persistent volumes
   hosts: nfs
-  tasks:
-    file:
-      path: "/srv/nfs/user-vols/pv{{item}}"
-      state: directory
-      mode: 0775
-      recurse: yes
-    loop: "range(0,200 + 1| list)"
+  roles:
+    - openshift-applier
+      vars:
+        openshift_cluster_content:
+        - object: PersistentVolume
+          content:
+            - name: Create Persistent Volume
+              template: templates/pv_template.yaml
+      with_sequence: start=1 end=200
