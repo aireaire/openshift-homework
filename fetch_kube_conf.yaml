@@ -1,7 +1,8 @@
 - name: Enable 'oc' command from baston host
   hosts: masters[0]
   tasks:
-    fetch:
-      src: /root/.kube/config
-      dest: /root/.kube/config
-      flat: yes
+    - name: fetch kube config
+      fetch:
+        src: /root/.kube/config
+        dest: /root/.kube/config
+        flat: yes
