@@ -1,12 +1,13 @@
 ---
 - name: create persistent volumes
-  hosts: nfs
+  hosts: localhost
   tasks:
   - name: pvs creator
     with_sequence: start=1 end=200
     include_role:
       name: openshift-applier
     vars:
+      ansible_connection: local
       openshift_cluster_content:
       - object: "PersistentVolume{{ item }}"
         content:
