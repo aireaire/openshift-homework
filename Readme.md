@@ -47,7 +47,7 @@ You may omit -u and -p parameters. In that case user name and password will be p
 Infromation about how users are added at deployment time can be found in [master configuration](#there-are-three-masters-working) section.
 
 - ### Registry has storage attached and working
-Registry storage of type NFS is located on the support node **support1.GUID.internal** in `/srv/nfs/registry folder`
+Registry storage of type NFS is located on the support node **support1.GUID.internal** in `/srv/nfs/registry` folder
 
 
 Following group variables configure storage:
@@ -93,8 +93,8 @@ openshift_hosted_router_namespace: 'default'
 - ### Ability to deploy a simple app (**nodejs-mongo-persistent**)
 To deploy sample app **nodejs-mongo_persistent** try run following commands on master node
 ```shell
-# oc new-project smoke-test
-# oc new-app nodejs-mongo-persistent
+oc new-project smoke-test
+oc new-app nodejs-mongo-persistent
 ```
 
 App deployment should start. To see the status of app check pods status
