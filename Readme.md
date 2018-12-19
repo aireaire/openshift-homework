@@ -107,6 +107,13 @@ App deployment should start. To see the status of app check pods status
 oc get pods -n smoke-test
 ```
 
+Once application has been deployed successfully you should see following output
+```
+NAME                              READY     STATUS      RESTARTS   AGE
+mongodb-1-qvv9n                   1/1       Running     0          2m
+nodejs-mongo-persistent-1-build   0/1       Completed   0          2m
+nodejs-mongo-persistent-1-g2cjd   1/1       Running     0          2m
+```
 ## HA requirements
 - ### There are three masters working
 To configure master nodes in the openshift cluster create `masters` group in the hosts inventory file.
