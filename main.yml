@@ -29,3 +29,9 @@
 
 - name: Deploy cluster
   import_playbook: /usr/share/ansible/openshift-ansible/playbooks/deploy_cluster.yml
+
+- name: Allow bastion host to run oc client
+  import_playbook: fetch_kube_conf.yaml
+
+- name: Setup persistent storage
+  import_playbook: create_pvs.yaml

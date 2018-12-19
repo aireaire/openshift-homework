@@ -88,7 +88,12 @@ openshift_hosted_router_namespace: 'default'
 ```
 
 - ### PVs of different types are available for users to consume
+Persistent Volumes are created by post-installation configuration playbook `create_pvs.yaml` as follows:
+- creates 200 folders in `/srv/nfs/user-vols/` directory on the `support1.GUID.internal` node.
+- using openshift-applier, creates 25 PersistentVolume objects size of 5Gi in OpenShift cluster
+- using openshift-applier, creates 25 PersistentVolume objects size of 10Gi in OpenShift cluster
 
+For more details see `create_pvs.yaml` playbook and `templates/pv_template.yaml` template.
 
 - ### Ability to deploy a simple app (**nodejs-mongo-persistent**)
 To deploy sample app **nodejs-mongo_persistent** try run following commands on master node
