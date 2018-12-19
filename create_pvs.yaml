@@ -20,4 +20,5 @@
       - object: PersistentVolume
         content:
           - name: Create Persistent Volume
+            action: create
             file: "resources/pv_template_{{item}}.yaml"
