@@ -1,17 +1,43 @@
 ---
-- name: create persistent volumes
+- name: setup support node
+  hosts: nfs
+  tasks:
+  - name: create volume directories
+    file:
+      path: "/srv/nfs/user-vols/pv{{ item }}"
+      group: nobody
+      owner: nobody
+      state: directory
+      mode: '777'
+    with_sequence: start=1 end=200
+  - name: create /etc/exports.d/openshift-uservols.exports
+    file:
+      path: /etc/exports.d/openshift-uservols.exports
+      state: touch
+  - name: define exports
+    lineinfile:
+      path: /etc/exports.d/openshift-uservols.exports
+      line: "/srv/nfs/user-vols/pv{{ item }} *(rw,root_squash)"
+    with_sequence: start=1 end=200
+  - name: restart nfs-server
+    service:
+      name: nfs-server
+      state: restarted
+
+- name: create PersistentVolume objects in the OpenShift cluster
   hosts: localhost
   tasks:
-  - name: create openshift templates with PersistentVolume objects
+  - name: create 25 openshift templates with 5Gi PersistentVolume objects
     template:
       src: templates/pv_template.yaml
-      dest: "resources/pv_template_{{item}}.yaml"
+      dest: "resources/pv_template_5Gi_{{item}}.yaml"
     vars:
       GUID: "{{ lookup('env','GUID') }}"
       VOLUME: "{{ item }}"
-    with_sequence: start=1 end=200
+      SIZE: 5Gi
+    with_sequence: start=1 end=25
   - name: create PersistentVolume objects in cluster
-    with_sequence: start=1 end=200
+    with_sequence: start=1 end=25
     include_role:
       name: openshift-applier
     vars:
@@ -19,6 +45,27 @@
       openshift_cluster_content:
       - object: PersistentVolume
         content:
-          - name: Create Persistent Volume
+          - name: Create 5Gi PersistentVolume objects in cluster
             action: create
-            file: "resources/pv_template_{{item}}.yaml"
+            file: "resources/pv_template_5Gi_{{item}}.yaml"
+  - name: create 25 openshift templates with 10Gi PersistentVolume objects
+    template:
+      src: templates/pv_template.yaml
+      dest: "resources/pv_template_10Gi_{{item}}.yaml"
+    vars:
+      GUID: "{{ lookup('env','GUID') }}"
+      VOLUME: "{{ item }}"
+      SIZE: 10Gi
+    with_sequence: start=26 end=50
+  - name: create PersistentVolume objects in cluster
+    with_sequence: start=26 end=50
+    include_role:
+      name: openshift-applier
+    vars:
+      ansible_connection: local
+      openshift_cluster_content:
+      - object: PersistentVolume
+        content:
+          - name: Create 10Gi PersistentVolume objects in cluster
+            action: create
+            file: "resources/pv_template_10Gi_{{item}}.yaml"

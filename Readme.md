@@ -91,6 +91,16 @@ openshift_hosted_router_namespace: 'default'
 
 
 - ### Ability to deploy a simple app (**nodejs-mongo-persistent**)
+To deploy sample app **nodejs-mongo_persistent** try run following commands on master node
+```shell
+# oc new-project smoke-test
+# oc new-app nodejs-mongo-persistent
+```
+
+App deployment should start. To see the status of app check pods status
+```shell
+oc get pods -n smoke-test
+```
 
 ## HA requirements
 - ### There are three masters working
