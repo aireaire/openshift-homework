@@ -6,7 +6,6 @@
       git:
         repo: https://github.com/redhat-cop/container-pipelines.git
         dest: container-pipelines
-        version: v3.5.0
     - name: install Galaxy dependencies
       shell: ansible-galaxy install -r requirements.yml --roles-path=galaxy
       args:
