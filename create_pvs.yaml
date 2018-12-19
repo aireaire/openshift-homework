@@ -2,8 +2,16 @@
 - name: create persistent volumes
   hosts: localhost
   tasks:
-  - name: pvs creator
-    with_sequence: start=1 end=200
+  - name: create openshift templates with PersistentVolume objects
+    template:
+      src: templates/pv_template.yaml
+      dest: "resources/pv_template_{{item}}.yaml"
+    vars:
+      GUID: "{{ lookup('env','GUID') }}"
+      VOLUME: "{{ item }}"
+    with_sequence: start=1 end=2
+  - name: create PersistentVolume objects in cluster
+    with_sequence: start=1 end=2
     include_role:
       name: openshift-applier
     vars:
@@ -12,6 +20,4 @@
       - object: "PersistentVolume{{ item }}"
         content:
           - name: Create Persistent Volume
-            template: templates/pv_template.yaml
-            params: resources/create_pvs_params.yaml
-
+            file: "resources/pv_template_{{item}}.yaml"
