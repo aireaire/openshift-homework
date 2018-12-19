@@ -9,15 +9,15 @@
     vars:
       GUID: "{{ lookup('env','GUID') }}"
       VOLUME: "{{ item }}"
-    with_sequence: start=1 end=2
+    with_sequence: start=1 end=200
   - name: create PersistentVolume objects in cluster
-    with_sequence: start=1 end=2
+    with_sequence: start=1 end=200
     include_role:
       name: openshift-applier
     vars:
       ansible_connection: local
       openshift_cluster_content:
-      - object: "PersistentVolume{{ item }}"
+      - object: PersistentVolume
         content:
           - name: Create Persistent Volume
             file: "resources/pv_template_{{item}}.yaml"

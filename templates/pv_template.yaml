@@ -1,15 +1,12 @@
-kind: Template
-name: "Template for pv{{ VOLUME }}"
 apiVersion: v1
-objects:
-  - kind: "PersistentVolume"
-    metadata:
-      name: "{{ VOLUME }}"
-    spec:
-      capacity:
-          storage: "10Gi"
-      accessModes: [ "ReadWriteOnce" ]
-      nfs:
-        path: "/srv/nfs/user-vols/{{ VOLUME }}"
-        server: "support1.{{ GUID }}.internal"
-      persistentVolumeReclaimPolicy: "Recycle"
+kind: "PersistentVolume"
+metadata:
+  name: "pv{{ VOLUME }}"
+spec:
+  capacity:
+      storage: "10Gi"
+  accessModes: [ "ReadWriteOnce" ]
+  nfs:
+    path: "/srv/nfs/user-vols/{{ VOLUME }}"
+    server: "support1.{{ GUID }}.internal"
+  persistentVolumeReclaimPolicy: "Recycle"
