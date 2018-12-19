@@ -7,6 +7,6 @@ spec:
       storage: "{{ SIZE }}"
   accessModes: [ "ReadWriteOnce" ]
   nfs:
-    path: "/srv/nfs/user-vols/{{ VOLUME }}"
+    path: "/srv/nfs/user-vols/pv{{ VOLUME }}"
     server: "support1.{{ GUID }}.internal"
   persistentVolumeReclaimPolicy: "Recycle"
