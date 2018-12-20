@@ -19,18 +19,18 @@
         - object: builds
           content:
           - name: deploy build pipeline to dev
-            template: resources/openshift-tasks/templates/pipeline_bc.yaml
+            template: resources/openshift-tasks/templates/pipeline-bc.yaml
             params: resources/openshift-tasks/params/build-dev
         - object: deployments
           content:
           - name: deploy dev environment
-            template: resources/openshift-tasks/templates/deployment.yml
+            template: resources/openshift-tasks/templates/app-template.yaml
             params: resources/openshift-tasks/params/deployment-dev
           - name: deploy test environment
-            template: resources/openshift-tasks/templates/deployment.yml
+            template: resources/openshift-tasks/templates/app-template.yaml
             params: resources/openshift-tasks/params/deployment-test
           - name: deploy prod environment
-            template: resources/openshift-tasks/templates/deployment.yml
+            template: resources/openshift-tasks/templates/app-template.yaml
             params: resources/openshift-tasks/params/deployment-prod
   vars:
     ansible_connection: local
