@@ -150,11 +150,7 @@ openshift_master_htpasswd_file: /root/htpasswd.openshift
 openshift_hosted_prometheus_deploy: true
 openshift_prometheus_namespace: openshift-metrics
 openshift_prometheus_node_selector:
-<<<<<<< HEAD
-  "node-role.kubernetes.io/infra": "true"
-=======
   node-role.kubernetes.io/infra: true
->>>>>>> 2961435... fix prometheus node selector: key-value map
 
 openshift_cluster_monitoring_operator_install: true
 
