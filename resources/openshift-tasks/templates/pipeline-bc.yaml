@@ -11,6 +11,13 @@ metadata:
   name: generic-java-jenkins-pipeline
 objects:
 - apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      application: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
+    namespace: ${NAMESPACE}
+- apiVersion: v1
   kind: BuildConfig
   metadata:
     annotations:
