@@ -9,6 +9,7 @@ metadata:
     tags: tomcat,tomcat8,java,jboss,xpaas,jenkins-ci
     version: 1.2.0
   name: generic-java-jenkins-pipeline
+objects:
 - apiVersion: v1
   kind: BuildConfig
   metadata:
