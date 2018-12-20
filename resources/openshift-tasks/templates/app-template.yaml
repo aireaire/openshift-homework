@@ -41,41 +41,6 @@ objects:
     to:
       name: ${APPLICATION_NAME}
 - apiVersion: v1
-  kind: BuildConfig
-  metadata:
-    labels:
-      application: ${APPLICATION_NAME}
-    name: ${APPLICATION_NAME}
-    namespace: ${NAMESPACE}
-  spec:
-    output:
-      to:
-        kind: ImageStreamTag
-        name: ${APPLICATION_NAME}:latest
-    source:
-      git:
-        ref: ${SOURCE_REF}
-        uri: ${SOURCE_URL}
-      type: Git
-    strategy:
-      sourceStrategy:
-        forcePull: true
-        from:
-          kind: ImageStreamTag
-          name: jboss-eap64-openshift:latest
-          namespace: openshift
-      type: Source
-    triggers:
-    - github:
-        secret: kJZLvfQr3hZg
-      type: GitHub
-    - generic:
-        secret: kJZLvfQr3hZg
-      type: Generic
-    - imageChange: {}
-      type: ImageChange
-    - type: ConfigChange
-- apiVersion: v1
   kind: DeploymentConfig
   metadata:
     labels:
@@ -170,10 +135,3 @@ parameters:
 - description: The name for the application.
   name: NAMESPACE
   required: true
-- description: Git source URI for application
-  name: SOURCE_URL
-  required: true
-  value: https://github.com/openshiftdemos/openshift-tasks
-- description: Git branch/tag reference
-  name: SOURCE_REF
-  value: master
