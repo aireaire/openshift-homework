@@ -10,6 +10,8 @@ objects:
   labels:
     client: alpha
   metadata:
+    annotations:
+      openshift.io/node-selector: client=alpha
     name: alpha-corp
     creationTimestam: null
   displayName: Alpha Corg
