@@ -24,7 +24,7 @@
               - description: Environmnet ID for OpenShift Homework
                 name: GUID
                 required: true
-                value: "{{ GUID }}"
+                value: "{{ lookup('env', 'GUID') }}"
   vars:
     ansible_connection: local
 
