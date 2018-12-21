@@ -12,9 +12,6 @@ objects:
       beta.kubernetes.io/arch: amd64
       beta.kubernetes.io/os: linux
       client: alpha
-      # kubernetes.io/hostname: node1.9519.internal
-      # logging-infra-fluentd: "true"
-      # node-role.kubernetes.io/compute: "true"
       runtime: docker
     name: "node1.${GUID}.internal"
 parameters:
