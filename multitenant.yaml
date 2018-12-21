@@ -21,10 +21,7 @@
           - name: label nodes dedicated to each customer
             template: resources/multitenant/templates/alpha-corp-node-label.yaml
             params_from_vars:
-              - description: Environmnet ID for OpenShift Homework
-                name: GUID
-                required: true
-                value: "{{ GUID }}"
+              GUID: "{{ GUID }}"
   vars:
     ansible_connection: local
 
