@@ -13,7 +13,7 @@ objects:
     annotations:
       openshift.io/node-selector: client=alpha
     name: alpha-corp
-    creationTimestam: null
+    creationTimestamp: null
   displayName: Alpha Corp
 - apiVersion: networking.k8s.io/v1
   kind: NetworkPolicy
@@ -36,7 +36,7 @@ objects:
     annotations:
       openshift.io/node-selector: client=beta
     name: beta-corp
-    creationTimestam: null
+    creationTimestamp: null
   displayName: Beta Corp
 - apiVersion: networking.k8s.io/v1
   kind: NetworkPolicy
