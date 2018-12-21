@@ -14,12 +14,12 @@
         - object: projects
           content:
           - name: Create environments
-            file: resources/multitenant/templates/projects.yml
+            file: resources/multitenant/templates/projects.yaml
             action: create
         - object: node labels
           content:
           - name: label nodes dedicated to each customer
-            template: resources/multitenant/templates/alpha-corp-node-label.yml
+            template: resources/multitenant/templates/alpha-corp-node-label.yaml
             params_from_vars:
               - description: Environmnet ID for OpenShift Homework
                 name: GUID
