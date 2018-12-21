@@ -1,0 +1,30 @@
+---
+- name: Deploy and Execute CICD workflow
+  hosts: localhost
+  tasks:
+    # - name: checkout openshift-tasks
+    #   git:
+    #     repo: https://github.com/OpenShiftDemos/openshift-tasks.git
+    #     dest: openshift-tasks
+    - name: Deploye 2 customers Alpha Corp and Beta Corp
+      include_role:
+        name: openshift-applier
+      vars:
+        openshift_cluster_content:
+        - object: projects
+          content:
+          - name: Create environments
+            file: resources/multitenant/templates/alpha-corp.yml
+            action: create
+        - object: node labels
+          content:
+          - name: label nodes dedicated to each customer
+            template: resources/multitenant/templates/alpha-corp-node-label.yml
+            params_from_vars:
+              - description: Environmnet ID for OpenShift Homework
+                name: GUID
+                required: true
+                value: "{{ GUID }}"
+  vars:
+    ansible_connection: local
+
