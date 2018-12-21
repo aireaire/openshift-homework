@@ -2,7 +2,7 @@
 - name: Deploy and Execute CICD workflow
   hosts: localhost
   tasks:
-    - name: Deploye 2 customers Alpha Corp and Beta Corp
+    - name: Deploy 2 customers Alpha Corp and Beta Corp
       include_role:
         name: openshift-applier
       vars:
@@ -11,7 +11,7 @@
           content:
           - name: Create environments
             file: resources/multitenant/templates/projects.yaml
-            action: create
+            # action: create
         - object: node labels
           content:
           - name: label nodes dedicated to each customer
