@@ -89,3 +89,17 @@ items:
   - kind: Group
     name: beta
   userNames: null
+- apiVersion: authorization.openshift.io/v1
+  groupNames:
+  - common
+  kind: RoleBinding
+  metadata:
+    name: edit
+    namespace: common
+    selfLink: /apis/authorization.openshift.io/v1/namespaces/alpha-corp/rolebindings/edit
+  roleRef:
+    name: edit
+  subjects:
+  - kind: Group
+    name: common
+  userNames: null
