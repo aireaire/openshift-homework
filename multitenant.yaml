@@ -15,7 +15,7 @@
         - object: node labels
           content:
           - name: label nodes dedicated to each customer
-            template: resources/multitenant/templates/node-labels.yaml
+            template: resources/multitenant/templates/node_labels.yaml
             params_from_vars:
               GUID: "{{ GUID }}"
   vars:
