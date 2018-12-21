@@ -1,18 +1,19 @@
 [WIP] Homework Assignment
-===================
-This is a documentation for homework assignment for ocp_advanced_deployment by Aleksandrs Sins
+=========================
+> by Aleksandrs Sins
 
+This is a  homework assignment documentation for ocp_advanced_deployment course.
+
+[TOC]
+
+## Installation
 To deploy the cluster run `main.yml` playbook and provide 3 group variables from command line:
-- `GUID` - the ID of Homework environment provided by labs.opentlc.com
-- `OAUTH_OREG_USER` - username for redhat.access.registry.com online registy
-- `OAUTH_OREG_PASS` - password for redhat.access.registry.com online registy
-
-Example:
-```
+```bash
 ansible-playbook main.yml --extra-vars="GUID=9519 OREG_AUTH_USER='yourusername' OREG_AUTH_PASS='yourpassword'"
 
 ```
 
+## Prerequisites
 The playbook deploys OpenShift cluster in Red Hat's lab environment assuming that the following nodes have been provisioned by infrastructure:
 
 **loadbalancer node**
@@ -340,8 +341,10 @@ The `projects` __*openshift-applier*__  object creates 3 projects for customers 
   - beta-corp - for Beta Corp customer company
   - common - for other customers
 
-Below is the listing of Namespace objects from the template:
+The fragment below is shows Namespace objects defined in the template:
 ```yaml
+# fragment from resources/multitenant/templates/projects.yaml file
+...
 - kind: Namespace
   apiVersion: v1
   labels:
@@ -375,10 +378,13 @@ Below is the listing of Namespace objects from the template:
     name: common
     creationTimestamp: null
   displayName: Unspecified Customers
+...
 ```
 
-The template also defines relevant groups and users in each namespace:
+The template also defines relevant groups and users for each namespace:
 ```yaml
+# fragment from resources/multitenant/templates/projects.yaml file
+...
 - kind: Group
   apiVersion: v1
   metadata:
@@ -409,11 +415,14 @@ The template also defines relevant groups and users in each namespace:
 - apiVersion: authorization.openshift.io/v1
   groupNames:
   - alpha
+...
 ```
 
 To allow the users effectively use their projects corresponding role bindings are defined within appropriate
 namespaces:
 ```yaml
+# fragment from resources/multitenant/templates/projects.yaml file
+...
   kind: RoleBinding
   metadata:
     name: edit
@@ -464,6 +473,8 @@ to label nodes according to related clients:
 - node3.$GUID.internal labeled with `client: common`
 
 ```yaml
+# resources/multitenant/templates/node_labels.yaml file
+
 apiVersion: v1
 kind: Template
 labels:
@@ -497,7 +508,7 @@ parameters:
 The `${GUID}` variable is copied from main playbook's `{{ GUID }}` group variable.
 
 Now, to ensure pods are created on appropriate node each project has been added `openshift.io/node-selector` annotation
-with appropriate label. See `annotations:` property of namespaces in [the previous subsection](#multiple-clients/customers-created)
+with appropriate label. See `annotations:` property of namespaces in [the previous subsection](#multiple-clientscustomers-created)
 - ### The new project template is modified so that it includes a LimitRange
 
 - ### A new user template is used to create a user object with the specific label value
