@@ -23,7 +23,7 @@ items:
 #     name: alpha-corp
 #     creationTimestamp: null
 #   displayName: Alpha Corp
-- kind: ProjectRequest
+- kind: Namespace
   apiVersion: v1
   labels:
     client: beta

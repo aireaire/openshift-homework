@@ -11,7 +11,7 @@
           content:
           - name: Create environments
             file: resources/multitenant/templates/projects.yaml
-            # action: create
+            action: create
         - object: node labels
           content:
           - name: label nodes dedicated to each customer
