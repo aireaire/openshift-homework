@@ -9,11 +9,14 @@ objects:
   kind: Node
   metadata:
     labels:
-      beta.kubernetes.io/arch: amd64
-      beta.kubernetes.io/os: linux
       client: alpha
-      runtime: docker
     name: "node1.${GUID}.internal"
+- apiVersion: v1
+  kind: Node
+  metadata:
+    labels:
+      client: beta
+    name: "node2.${GUID}.internal"
 parameters:
 - description: Environmnet ID for OpenShift Homework
   name: GUID

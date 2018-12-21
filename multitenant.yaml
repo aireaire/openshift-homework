@@ -19,7 +19,7 @@
         - object: node labels
           content:
           - name: label nodes dedicated to each customer
-            template: resources/multitenant/templates/alpha-corp-node-label.yaml
+            template: resources/multitenant/templates/node-labels.yaml
             params_from_vars:
               GUID: "{{ GUID }}"
   vars:
