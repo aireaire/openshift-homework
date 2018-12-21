@@ -2,10 +2,6 @@
 - name: Deploy and Execute CICD workflow
   hosts: localhost
   tasks:
-    # - name: checkout openshift-tasks
-    #   git:
-    #     repo: https://github.com/OpenShiftDemos/openshift-tasks.git
-    #     dest: openshift-tasks
     - name: Deploye 2 customers Alpha Corp and Beta Corp
       include_role:
         name: openshift-applier
