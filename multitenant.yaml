@@ -14,7 +14,7 @@
         - object: projects
           content:
           - name: Create environments
-            file: resources/multitenant/templates/alpha-corp.yml
+            file: resources/multitenant/templates/projects.yml
             action: create
         - object: node labels
           content:
