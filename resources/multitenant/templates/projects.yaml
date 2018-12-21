@@ -8,7 +8,7 @@ items:
   metadata:
     annotations:
       openshift.io/node-selector: client=alpha
-      scheduler.alpha.kubernetes.io/node-selector: client=alpha
+      net.beta.kubernetes.io/network-policy: '{"ingress":{"isolation":"DefaultDeny"}}'
     name: alpha-corp
     creationTimestamp: null
   displayName: Alpha Corp
@@ -19,7 +19,7 @@ items:
   metadata:
     annotations:
       openshift.io/node-selector: client=beta
-      scheduler.alpha.kubernetes.io/node-selector: client=beta
+      net.beta.kubernetes.io/network-policy: '{"ingress":{"isolation":"DefaultDeny"}}'
     name: beta-corp
     creationTimestamp: null
   displayName: Beta Corp
