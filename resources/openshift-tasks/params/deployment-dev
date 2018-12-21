@@ -1,5 +1,5 @@
-APPLICATION_NAME=app-openshift-tasks
-NAMESPACE=app-openshift-tasks-dev
-SA_NAMESPACE=app-openshift-tasks-build
+APPLICATION_NAME=tasks
+NAMESPACE=tasks-dev
+SA_NAMESPACE=tasks-build
 READINESS_RESPONSE=status.:.UP
 READINESS_PATH=/health

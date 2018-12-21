@@ -1,6 +1,6 @@
-APPLICATION_NAME=app-openshift-tasks
-NAMESPACE=app-openshift-tasks-test
+APPLICATION_NAME=tasks
+NAMESPACE=tasks-test
 SA_NAME=jenkins
-SA_NAMESPACE=app-openshift-tasks-build
+SA_NAMESPACE=tasks-build
 READINESS_RESPONSE=status.:.UP
 READINESS_PATH=/health

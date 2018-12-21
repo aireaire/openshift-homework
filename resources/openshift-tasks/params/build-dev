@@ -1,2 +1,2 @@
-APPLICATION_NAME=app-openshift-tasks
-NAMESPACE=app-openshift-tasks-build
+APPLICATION_NAME=tasks
+NAMESPACE=tasks-build

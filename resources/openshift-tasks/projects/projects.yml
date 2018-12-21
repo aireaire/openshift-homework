@@ -4,24 +4,24 @@ items:
 - kind: ProjectRequest
   apiVersion: v1
   metadata:
-    name: app-openshift-tasks-build
+    name: tasks-build
     creationTimestam: null
   displayName: OpenShift Tasks - Build
 - kind: ProjectRequest
   apiVersion: v1
   metadata:
-    name: app-openshift-tasks-dev
+    name: tasks-dev
     creationTimestam: null
   displayName: OpenShift Tasks - Dev
 - kind: ProjectRequest
   apiVersion: v1
   metadata:
-    name: app-openshift-tasks-test
+    name: tasks-test
     creationTimestam: null
   displayName: OpenShift Tasks - Test
 - kind: ProjectRequest
   apiVersion: v1
   metadata:
-    name: app-openshift-tasks-prod
+    name: tasks-prod
     creationTimestam: null
   displayName: OpenShift Tasks - Prod
