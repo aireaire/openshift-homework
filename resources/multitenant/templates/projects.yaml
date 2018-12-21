@@ -15,19 +15,6 @@ objects:
     name: alpha-corp
     creationTimestamp: null
   displayName: Alpha Corp
-- apiVersion: networking.k8s.io/v1
-  kind: NetworkPolicy
-  metadata:
-    name: allow-same-namespace
-    namespace: alpha-corp
-  spec:
-    ingress:
-    - from:
-      - podSelector: {}
-    - from:
-      - namespaceSelector:
-          matchLabels:
-            name: alpha-corp
 - kind: ProjectRequest
   apiVersion: v1
   labels:
@@ -38,16 +25,3 @@ objects:
     name: beta-corp
     creationTimestamp: null
   displayName: Beta Corp
-- apiVersion: networking.k8s.io/v1
-  kind: NetworkPolicy
-  metadata:
-    name: allow-same-namespace
-    namespace: beta-corp
-  spec:
-    ingress:
-    - from:
-      - podSelector: {}
-    - from:
-      - namespaceSelector:
-          matchLabels:
-            name: beta-corp

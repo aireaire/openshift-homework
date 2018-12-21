@@ -18,6 +18,10 @@
             template: resources/multitenant/templates/node_labels.yaml
             params_from_vars:
               GUID: "{{ GUID }}"
+        - object: network policies
+          content:
+          - name: create network policies
+            template: resources/multitenant/templates/netpolicy.yaml
   vars:
     ansible_connection: local
 
