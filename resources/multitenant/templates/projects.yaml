@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: List
 items:
-- kind: ProjectRequest
+- kind: Namespace
   apiVersion: v1
   labels:
     client: alpha
@@ -12,6 +12,17 @@ items:
     name: alpha-corp
     creationTimestamp: null
   displayName: Alpha Corp
+# - kind: ProjectRequest
+#   apiVersion: v1
+#   labels:
+#     client: alpha
+#   metadata:
+#     annotations:
+#       openshift.io/node-selector: client=alpha
+#       net.beta.kubernetes.io/network-policy: '{"ingress":{"isolation":"DefaultDeny"}}'
+#     name: alpha-corp
+#     creationTimestamp: null
+#   displayName: Alpha Corp
 - kind: ProjectRequest
   apiVersion: v1
   labels:
