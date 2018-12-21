@@ -17,6 +17,12 @@ objects:
     labels:
       client: beta
     name: "node2.${GUID}.internal"
+- apiVersion: v1
+  kind: Node
+  metadata:
+    labels:
+      client: common
+    name: "node3.${GUID}.internal"
 parameters:
 - description: Environmnet ID for OpenShift Homework
   name: GUID

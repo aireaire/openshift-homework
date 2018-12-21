@@ -1,5 +1,5 @@
 ---
-- name: Deploy and Execute CICD workflow
+- name: Deploy multitenant environments
   hosts: localhost
   tasks:
     - name: Deploy 2 customers Alpha Corp and Beta Corp
@@ -9,7 +9,7 @@
         openshift_cluster_content:
         - object: projects
           content:
-          - name: Create environments
+          - name: Create environments with users and groups
             file: resources/multitenant/templates/projects.yaml
             action: create
         - object: node labels
@@ -20,7 +20,10 @@
               GUID: "{{ GUID }}"
         - object: network policies
           content:
-          - name: create network policies
+          - name: define network policies
+            description: |-
+              create a network policy for each project to allow
+              communication between project's pods
             template: resources/multitenant/templates/netpolicy.yaml
             action: create
   vars:

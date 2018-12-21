@@ -31,3 +31,16 @@ objects:
       - namespaceSelector:
           matchLabels:
             name: beta-corp
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    name: allow-same-namespace
+    namespace: common
+  spec:
+    ingress:
+    - from:
+      - podSelector: {}
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            name: beta-corp

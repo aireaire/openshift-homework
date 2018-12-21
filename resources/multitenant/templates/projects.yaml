@@ -61,3 +61,31 @@ items:
       client: common
     name: common
     namespace: common
+- apiVersion: authorization.openshift.io/v1
+  groupNames:
+  - alpha
+  kind: RoleBinding
+  metadata:
+    name: edit
+    namespace: alpha-corp
+    selfLink: /apis/authorization.openshift.io/v1/namespaces/alpha-corp/rolebindings/edit
+  roleRef:
+    name: edit
+  subjects:
+  - kind: Group
+    name: alpha
+  userNames: null
+- apiVersion: authorization.openshift.io/v1
+  groupNames:
+  - beta
+  kind: RoleBinding
+  metadata:
+    name: edit
+    namespace: beta-corp
+    selfLink: /apis/authorization.openshift.io/v1/namespaces/alpha-corp/rolebindings/edit
+  roleRef:
+    name: edit
+  subjects:
+  - kind: Group
+    name: beta
+  userNames: null
