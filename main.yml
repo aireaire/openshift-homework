@@ -35,3 +35,9 @@
 
 - name: Setup persistent storage
   import_playbook: create_pvs.yaml
+
+- name: CICD for openshift-tasks
+  import_playbook: cicd.yaml
+
+- name: Multitenancy
+  import_playbook: multitenant.yaml
