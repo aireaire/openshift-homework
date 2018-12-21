@@ -29,7 +29,7 @@ items:
     client: common
   metadata:
     annotations:
-      openshift.io/node-selector: client=beta
+      openshift.io/node-selector: client=common
       net.beta.kubernetes.io/network-policy: '{"ingress":{"isolation":"DefaultDeny"}}'
     name: common
     creationTimestamp: null

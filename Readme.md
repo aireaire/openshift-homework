@@ -2,13 +2,18 @@
 ===================
 This is a documentation for homework assignment for ocp_advanced_deployment by Aleksandrs Sins
 
-To deploy the cluster run ./install.sh script providing mandatory parameters:
+To deploy the cluster run `main.yml` playbook and provide 3 group variables from command line:
+- `GUID` - the ID of Homework environment provided by labs.opentlc.com
+- `OAUTH_OREG_USER` - username for redhat.access.registry.com online registy
+- `OAUTH_OREG_PASS` - password for redhat.access.registry.com online registy
+
+Example:
+```
+ansible-playbook main.yml --extra-vars="GUID=9519 OREG_AUTH_USER='yourusername' OREG_AUTH_PASS='yourpassword'"
 
 ```
-./install.sh -g <GUID>
-```
 
-The script deploys OpenShift cluster in Red Hat's lab environment assuming that the following nodes have been provisioned by infrastructure:
+The playbook deploys OpenShift cluster in Red Hat's lab environment assuming that the following nodes have been provisioned by infrastructure:
 
 **loadbalancer node**
 - `loadbalancer1.$GUID.internal`
@@ -38,11 +43,11 @@ The script deploys OpenShift cluster in Red Hat's lab environment assuming that 
 ## Basic requirements
 
 - ### Ability to authenticate at the master console
-In order to authenticate to openshift at the master console, first login to master host, e.g. master1.GUID.internal, and then use following command:
+After cluster is deployed you may authenticate to openshift from the master or bastion host with `oc` tool:
 ```
 oc login -u USER -p PASSWORD
 ```
-You may omit -u and -p parameters. In that case user name and password will be prompted interactively.
+You may also omit -u and -p parameters, then user name and password will be prompted interactively.
 
 Infromation about how users are added at deployment time can be found in [master configuration](#there-are-three-masters-working) section.
 
@@ -326,14 +331,175 @@ openshift_metrics_heapster_nodeselector:
 - ### HPA is configured and working on production deployment of openshift-tasks
 
 ## Multitenancy
+The `multitenant.yaml` playbook uses __*openshift-applier*__ role to create multitenancy setup from
+templates in `resources/multitenant` directory.
+
 - ### Multiple clients/customers created
+The `projects` __*openshift-applier*__  object creates 3 projects for customers by applying `resources/multitenant/templates/projects.yaml` template.
+  - alpha-corp - for Alpha Corp customer company
+  - beta-corp - for Beta Corp customer company
+  - common - for other customers
 
-- ### Dedicated node for each client/customer
+Below is the listing of Namespace objects from the template:
+```yaml
+- kind: Namespace
+  apiVersion: v1
+  labels:
+    client: alpha
+  metadata:
+    annotations:
+      openshift.io/node-selector: client=alpha
+      net.beta.kubernetes.io/network-policy: '{"ingress":{"isolation":"DefaultDeny"}}'
+    name: alpha-corp
+    creationTimestamp: null
+  displayName: Alpha Corp
+- kind: Namespace
+  apiVersion: v1
+  labels:
+    client: beta
+  metadata:
+    annotations:
+      openshift.io/node-selector: client=beta
+      net.beta.kubernetes.io/network-policy: '{"ingress":{"isolation":"DefaultDeny"}}'
+    name: beta-corp
+    creationTimestamp: null
+  displayName: Beta Corp
+- kind: Namespace
+  apiVersion: v1
+  labels:
+    client: common
+  metadata:
+    annotations:
+      openshift.io/node-selector: client=common
+      net.beta.kubernetes.io/network-policy: '{"ingress":{"isolation":"DefaultDeny"}}'
+    name: common
+    creationTimestamp: null
+  displayName: Unspecified Customers
+```
 
-- ### admissionControl plugin sets specific limits per label (client/customer)
+The template also defines relevant groups and users in each namespace:
+```yaml
+- kind: Group
+  apiVersion: v1
+  metadata:
+    labels:
+      client: alpha
+    name: alpha
+    namespace: alpha-corp
+  users:
+  - amy
+  - andrew
+- apiVersion: v1
+  kind: Group
+  metadata:
+    labels:
+      client: beta
+    name: beta
+    namespace: beta-corp
+  users:
+  - brian
+  - betty
+- apiVersion: v1
+  kind: Group
+  metadata:
+    labels:
+      client: common
+    name: common
+    namespace: common
+- apiVersion: authorization.openshift.io/v1
+  groupNames:
+  - alpha
+```
 
+To allow the users effectively use their projects corresponding role bindings are defined within appropriate
+namespaces:
+```yaml
+  kind: RoleBinding
+  metadata:
+    name: edit
+    namespace: alpha-corp
+    selfLink: /apis/authorization.openshift.io/v1/namespaces/alpha-corp/rolebindings/edit
+  roleRef:
+    name: edit
+  subjects:
+  - kind: Group
+    name: alpha
+  userNames: null
+- apiVersion: authorization.openshift.io/v1
+  groupNames:
+  - beta
+  kind: RoleBinding
+  metadata:
+    name: edit
+    namespace: beta-corp
+    selfLink: /apis/authorization.openshift.io/v1/namespaces/alpha-corp/rolebindings/edit
+  roleRef:
+    name: edit
+  subjects:
+  - kind: Group
+    name: beta
+  userNames: null
+- apiVersion: authorization.openshift.io/v1
+  groupNames:
+  - common
+  kind: RoleBinding
+  metadata:
+    name: edit
+    namespace: common
+    selfLink: /apis/authorization.openshift.io/v1/namespaces/alpha-corp/rolebindings/edit
+  roleRef:
+    name: edit
+  subjects:
+  - kind: Group
+    name: common
+  userNames: null
+```
+
+- ### Dedicated node for each Client
+The `node labels` __*openshift-applier*__ object applies `resources/multitenant/templates/node_labels.yaml` template
+to label nodes according to related clients:
+
+- node1.$GUID.internal labeled with `client: alpha`
+- node2.$GUID.internal labeled with `client: beta`
+- node3.$GUID.internal labeled with `client: common`
+
+```yaml
+apiVersion: v1
+kind: Template
+labels:
+  template: label_customer_nodes
+metadata:
+  name: label nodes dedicated to customers
+objects:
+- apiVersion: v1
+  kind: Node
+  metadata:
+    labels:
+      client: alpha
+    name: "node1.${GUID}.internal"
+- apiVersion: v1
+  kind: Node
+  metadata:
+    labels:
+      client: beta
+    name: "node2.${GUID}.internal"
+- apiVersion: v1
+  kind: Node
+  metadata:
+    labels:
+      client: common
+    name: "node3.${GUID}.internal"
+parameters:
+- description: Environmnet ID for OpenShift Homework
+  name: GUID
+  required: true
+```
+The `${GUID}` variable is copied from main playbook's `{{ GUID }}` group variable.
+
+Now, to ensure pods are created on appropriate node each project has been added `openshift.io/node-selector` annotation
+with appropriate label. See `annotations:` property of namespaces in [the previous subsection](#multiple-clients/customers-created)
 - ### The new project template is modified so that it includes a LimitRange
 
-- ### The new user template is used to create a user object with the specific label value
+- ### A new user template is used to create a user object with the specific label value
 
-- ### On-boarding new client documentation explains how to create a new client/customer
+- ### Alpha and Beta Corp users are confined to projects, and all new pods are deployed to customer dedicated nodes
