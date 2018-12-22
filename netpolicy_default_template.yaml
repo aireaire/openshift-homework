@@ -2,6 +2,10 @@
 - name: Update default template
   hosts: localhost
   tasks:
+    - name: touch template in tmp dir
+      file:
+        path: tmp/template.yaml
+        state: touch
     - name: get bootstrap template
       shell: oc adm create-bootstrap-project-template -o yaml > template.yaml
     - name: add network policy items to the template
