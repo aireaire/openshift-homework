@@ -5,9 +5,9 @@
     - name: get bootstrap template
       shell: oc adm create-bootstrap-project-template -o yaml > template.yaml
     - name: add default annotation to deny all
-      lineinfile:
+      blockinfile:
         path: template.yaml
-        insertafter: '(?s)kind: Project.*?annotations:'
+        insertafter: '(?skind: Project.*?annotations:)'
         line: "          net.beta.kubernetes.io/network-policy='{\"ingress\":{\"isolation\":\"DefaultDeny\"}}'"
     - name: add network policy items to the template
       lineinfile:
