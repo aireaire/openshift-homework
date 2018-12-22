@@ -1,17 +1,25 @@
-[WIP] Homework Assignment
+Advanced Deployment with OpenShift - Homework Assignment
 =========================
 > by Aleksandrs Sins
 
-This is a  homework assignment documentation for ocp_advanced_deployment course.
-
-[TOC]
+This is a homework documentation for ocp_advanced_deployment course. It is organized in the same way as
+requirements are defined in the assignment and describes how the requirements were fulfilled.
 
 ## Installation
-To deploy the cluster run `main.yml` playbook and provide 3 group variables from command line:
+1. Login to your bastion host as root
+2. Clone the repository
+```bash
+git clone https://github.com/aireaire/openshift-homework.git
+```
+3. Run `main.yml` ansible playbook providing 3 group variables from command line:
 ```bash
 ansible-playbook main.yml --extra-vars="GUID=9519 OREG_AUTH_USER='yourusername' OREG_AUTH_PASS='yourpassword'"
 
 ```
+
+* `GUID` - The ID of cluster provided by labs.opentlc.com for Homework Assignment.
+* `OREG_AUTH_USER` - User name to authenticate to registry.access.redhat.com online registry.
+* `OREG_AUTH_PASS` - Password to authenticate to registry.access.redhat.com online registry.
 
 ## Prerequisites
 The playbook deploys OpenShift cluster in Red Hat's lab environment assuming that the following nodes have been provisioned by infrastructure:
@@ -24,11 +32,9 @@ The playbook deploys OpenShift cluster in Red Hat's lab environment assuming tha
 - `master2.$GUID.internal`
 - `master3.$GUID.internal`
 
-
 **infra nodes**
 - `infranode1.$GUID.internal`
 - `infranode2.$GUID.internal`
-
 
 **regular nodes**
 - `node1.$GUID.internal`
@@ -36,15 +42,23 @@ The playbook deploys OpenShift cluster in Red Hat's lab environment assuming tha
 - `node3.$GUID.internal`
 - `node4.$GUID.internal`
 
-
 **storage node**
 - `support1.$GUID.internal`
 
 
 ## Basic requirements
+Ansible playbook prepares bastion host to deploy OpenShift cluster with following steps:
+1. Installs `atomic-openshift-clients` and `openshift-ansible` yum packages
+2. Downloads `openshift-applier` role from https://github.com/redhat-cop/openshift-applier.git project
 
-- ### Ability to authenticate at the master console
-After cluster is deployed you may authenticate to openshift from the master or bastion host with `oc` tool:
+To deploy OpenShift cluster with Ansible deployer it creates inventory file from `templates/hosts.j2` template and
+copies it to `/etc/ansible/hosts` file. The inventory describes `OSEv3` hosts super group according to prerequisites.
+
+Group variables for OSEv3 are specified in `resources/OSEv3.yaml` file which is copied to /etc/ansible/group_vars/ folder.
+See further sections for more details about OpenShift cluster deployment.
+
+- #### Ability to authenticate at the master console
+After successful playbook run you should be able to authenticate to openshift from master or bastion host with `oc` tool:
 ```
 oc login -u USER -p PASSWORD
 ```
@@ -52,13 +66,17 @@ You may also omit -u and -p parameters, then user name and password will be prom
 
 Infromation about how users are added at deployment time can be found in [master configuration](#there-are-three-masters-working) section.
 
-- ### Registry has storage attached and working
-Registry storage of type NFS is located on the support node **support1.GUID.internal** in `/srv/nfs/registry` folder
+- #### Registry has storage attached and working
+Registry storage of type NFS is located on the support node **support1.GUID.internal** in `/srv/nfs/registry` folder.
 
-
-Following group variables configure storage:
+Following group variables specify registry storage parameters:
 ```yaml
 # file: group_vars/OSEv3.yaml
+
+# Set this line to enable NFS
+# Note that NFS is used temporary as a POC. It is discouraged to use NFS and you should consider switching to different
+# storage solution.
+openshift_enable_unsupported_configurations: true
 
 openshift_hosted_registry_storage_kind: nfs
 openshift_hosted_registry_storage_access_modes: ['ReadWriteMany']
@@ -68,8 +86,9 @@ openshift_hosted_registry_storage_volume_name: registry
 openshift_hosted_registry_storage_volume_size: 20Gi
 ```
 
-- ### Router is configured on each infranode
-Specify infranodes label in router node selector
+- #### Router is configured on each infranode
+Default label `"node-role.kubernetes.io/infra": "true"` for infra nodes is set in router node selector to ensure
+router pods are scheduled on them.
 
 NOTE: the OpenShift cluster POC for MitziCom is created with pre-defined users from httpasswd.openshift file. This is configured by the following group variables in `/etc/ansible/group_vars/OSEv3.yaml`:
 
@@ -93,7 +112,7 @@ openshift_hosted_router_selector: "{{ openshift_router_selector | default(opensh
 openshift_hosted_router_namespace: 'default'
 ```
 
-- ### PVs of different types are available for users to consume
+- #### PVs of different types are available for users to consume
 Persistent Volumes are created by post-installation configuration playbook `create_pvs.yaml` as follows:
 - creates 200 folders in `/srv/nfs/user-vols/` directory on the `support1.GUID.internal` node.
 - using openshift-applier, creates 25 PersistentVolume objects size of 5Gi in OpenShift cluster
@@ -101,7 +120,7 @@ Persistent Volumes are created by post-installation configuration playbook `crea
 
 For more details see `create_pvs.yaml` playbook and `templates/pv_template.yaml` template.
 
-- ### Ability to deploy a simple app (**nodejs-mongo-persistent**)
+- #### Ability to deploy a simple app (**nodejs-mongo-persistent**)
 To deploy sample app **nodejs-mongo_persistent** try run following commands on master node
 ```shell
 oc new-project smoke-test
@@ -121,10 +140,8 @@ nodejs-mongo-persistent-1-build   0/1       Completed   0          2m
 nodejs-mongo-persistent-1-g2cjd   1/1       Running     0          2m
 ```
 ## HA requirements
-- ### There are three masters working
+- #### There are three masters working
 To configure master nodes in the openshift cluster create `masters` group in the hosts inventory file.
-
-The below example instructs ansible deployer to setup three master nodes:
 
 ```ini
 # file /etc/ansible/hosts
@@ -146,18 +163,19 @@ master3.GUID.internal openshift_node_group_name='node-config-master'
 ...
 ```
 
-Also specify HTPasswd identity provider to import users for the cluster in group variables file `group_vars/OSEv3.yaml`:
-
+HTPasswd is used as identity provider and configured in following group variables:
 ```yaml
 # file: group_vars/OSEv3.yaml
 
 openshift_master_identity_providers: [{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider'}]
 openshift_master_htpasswd_file: /root/htpasswd.openshift
 ```
+
 More information on how to create your custom HTPasswd file or use different identity provider, e.g LDAP, see  [Configuring authentication and user agent](https://docs.openshift.com/container-platform/3.11/install_config/configuring_authentication.html) OpenShift documentation.
 
-- ### There are three etcd instances working
-Like with masters, for etcd instances create **etcd** group in the hosts inventory file. Use same nodes as for **masters** group.
+- #### There are three `**etcd**` instances working
+Like with masters, for etcd instances create **etcd** group in the `/etc/ansible/hosts` inventory file and
+reuse **masters** group nodes.
 
 ```ini
 # file /etc/ansible/hosts
@@ -172,8 +190,8 @@ master2.GUID.internal
 master3.GUID.internal
 ```
 
-- ### There is a load balancer to access the masters
-To deploy a load balancer to access the masters define load balancer host in the **lb** group of the hosts inventory file.
+- #### There is a load balancer to access the masters
+To deploy a load balancer for masters access the load balancer host is defined in the **lb** group of the inventory:
 ```ini
 # file /etc/ansible/hosts
 
@@ -185,7 +203,7 @@ lb
 loadbalancer1.GUID.internal
 ```
 
-And define master ports and domain name for external load balancer access in `group_vars/OSEv3.yaml`:
+Master ports and domain name for external load balancer access are configured as follows:
 ```yaml
 # file: group_vars/OSEv3.yaml
 
@@ -193,45 +211,46 @@ openshift_master_api_port: 443
 openshift_master_console_port: 443
 
 # load balancer domain name for external access
-openshift_master_cluster_public_hostname: loadbalancer.GUID.example.opentlc.com
+openshift_master_cluster_public_hostname: loadbalancer.${GUID}.example.opentlc.com
 ```
 
-- ### There is a load balancer/DNS for both infranodes
-Specify load balancer host for infra nodes in `group_vars/OSEv3.yaml`:
+- #### There is a load balancer/DNS for both infranodes called \*.apps.$GUID.$DOMAIN
+The load balancer for infra nodes and any exposed application is configured as follows:
 ```yaml
 # file: group_vars/OSEv3.yaml
 
 # load balancer domain name for internal cluster communication
-openshift_master_cluster_hostname: loadbalancer1.GUID.internal
+openshift_master_cluster_hostname: loadbalancer1.${GUID}.internal
+openshift_master_default_subdomain: apps.${GUID}.example.opentlc.com
 ```
 
-- ### There are at least two infranodes
-Infra nodes should be listed in **nodes** group and assigned to `'node-config-infra'` openshift node group in the inventory file, e.g.:
+- #### There are at least two infranodes
+Infra nodes are listed in **nodes** group and linked to `'node-config-infra'` openshift node group in the inventory file
+as follows:
 ```ini
 # file /etc/ansible/hosts
 
 [nodes]
-infranode1.80f0.internal openshift_node_group_name='node-config-infra'
-infranode2.80f0.internal openshift_node_group_name='node-config-infra'
+infranode1.${GUID}.internal openshift_node_group_name='node-config-infra'
+infranode2.${GUID}.internal openshift_node_group_name='node-config-infra'
 ```
 
-The openshift infra node group `'node-config-infra'` gets default label `node-role.kubernetes.io/infra=true` by ansible deployer. See `/usr/share/ansible/openshift-ansible/roles/openshift_facts/defaults/main.yml` file.
+The openshift infra node group `'node-config-infra'` is assigned the default label `node-role.kubernetes.io/infra=true`
+in Ansible deployer. Check `/usr/share/ansible/openshift-ansible/roles/openshift_facts/defaults/main.yml` file.
 
 For more details see [configuring inventory node group definitions](https://docs.openshift.com/container-platform/3.10/install/configuring_inventory_file.html#configuring-inventory-node-group-definitions) documentation.
 
 ## Environment configuration
-- ### NetworkPolicy is configured and working with default project isolation (simulate Multitenancy)
-Specify network plugin for OpenShift SDN
-
+- #### NetworkPolicy is configured and working with projects isolated by default
+Network Policy plugin for OpenShift SDN is configured as follows:
 ```yaml
 # file: group_vars/OSEv3.yaml
 
 os_sdn_network_plugin_name: 'redhat/openshift-ovs-networkpolicy'
 ```
 
-- ### Aggregated logging is configured and working
-To enable logging specify following variables in `group_vars/OSEv3.yaml`
-
+- #### Aggregated logging is configured and working
+To enable logging and setup storage for it following variables are set:
 ```yaml
 # file: group_vars/OSEv3.yaml
 
@@ -255,10 +274,10 @@ openshift_logging_es_cluster_size: 1
 openshift_logging_curator_default_days: 2
 ```
 
-Refer to OpenShift [Aggregate Logging](https://docs.openshift.com/container-platform/3.6/install_config/aggregate_logging.html) documentation for additional options.
-- ### Metrics collection is configured and working
-Specify following group varaibles in  `group_vars/OSEv3.yaml` for metrics:
+For additional options refer to OpenShift [Aggregate Logging](https://docs.openshift.com/container-platform/3.6/install_config/aggregate_logging.html) documentation.
 
+- #### Metrics collection is configured and working
+To enable projects metrics and setup storage for it following group varaibles are set:
 ```yaml
 # file: group_vars/OSEv3.yaml
 
@@ -279,10 +298,10 @@ openshift_metrics_cassandra_pvc_storage_class_name: ""
 # Store Metrics for 2 days
 openshift_metrics_duration: 2
 ```
-- ### Router and Registry Pods run on Infranodes
+- #### Router and Registry Pods run on Infranodes
 By default node selector for Router and Registry is set to 'node-role.kubernetes.io/infra=true'
 
-You only need to change selectors if you have defined other labels for infra nodes
+Change selectors only if you have defined other labels for infra nodes:
 ```yaml
 # file: group_vars/OSEv3.yaml
 
@@ -291,9 +310,8 @@ openshift_router_selector:
 openshift_registry_selector:
     <your infra node label key>: <label value>
 ```
-- ### Metrics and Logging components run on Infranodes
-Specify node selectors for Metrics and Logging components in group varaibles in  `group_vars/OSEv3.yaml`
-
+- #### Metrics and Logging components run on Infranodes
+To enable Metrics and Logging components set following group varaibles:
 ```yaml
 # file: group_vars/OSEv3.yaml
 
@@ -323,19 +341,22 @@ openshift_metrics_heapster_nodeselector:
   "node-role.kubernetes.io/infra": "true"
 ```
 ## CICD Workflow
-- ### Jenkins pod is running with a persistent volume
+The CICD workflow is configured by `cicd.yaml` playbook that uses templates in `resources/openshift-tasks` folder and
+__*openshift-applier*__ role.
 
-- ### Jenkins deploys openshift-tasks app
+- #### Jenkins pod is running with a persistent volume
 
-- ### Jenkins OpenShift plugin is used to create a CICD workflow
+- #### Jenkins deploys openshift-tasks app
 
-- ### HPA is configured and working on production deployment of openshift-tasks
+- #### Jenkins OpenShift plugin is used to create a CICD workflow
+
+- #### HPA is configured and working on production deployment of openshift-tasks
 
 ## Multitenancy
 The `multitenant.yaml` playbook uses __*openshift-applier*__ role to create multitenancy setup from
 templates in `resources/multitenant` directory.
 
-- ### Multiple clients/customers created
+- #### Multiple clients/customers created
 The `projects` __*openshift-applier*__  object creates 3 projects for customers by applying `resources/multitenant/templates/projects.yaml` template.
   - alpha-corp - for Alpha Corp customer company
   - beta-corp - for Beta Corp customer company
@@ -464,7 +485,7 @@ namespaces:
   userNames: null
 ```
 
-- ### Dedicated node for each Client
+- #### Dedicated node for each Client
 The `node labels` __*openshift-applier*__ object applies `resources/multitenant/templates/node_labels.yaml` template
 to label nodes according to related clients:
 
@@ -509,8 +530,8 @@ The `${GUID}` variable is copied from main playbook's `{{ GUID }}` group variabl
 
 Now, to ensure pods are created on appropriate node each project has been added `openshift.io/node-selector` annotation
 with appropriate label. See `annotations:` property of namespaces in [the previous subsection](#multiple-clientscustomers-created)
-- ### The new project template is modified so that it includes a LimitRange
+- #### The new project template is modified so that it includes a LimitRange
 
-- ### A new user template is used to create a user object with the specific label value
+- #### A new user template is used to create a user object with the specific label value
 
-- ### Alpha and Beta Corp users are confined to projects, and all new pods are deployed to customer dedicated nodes
+- #### Alpha and Beta Corp users are confined to projects, and all new pods are deployed to customer dedicated nodes
