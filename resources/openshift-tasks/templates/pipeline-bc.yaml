@@ -5,8 +5,8 @@ labels:
 metadata:
   annotations:
     description: Application template for JWS applications built using a Jenkins Pipeline
-    iconClass: icon-tomcat
-    tags: tomcat,tomcat8,java,jboss,xpaas,jenkins-ci
+    iconClass: icon-jenkins
+    tags: jenkins-ci, tomcat,tomcat8,java,jboss,xpaas
     version: 1.2.0
   name: generic-java-jenkins-pipeline
 objects:
