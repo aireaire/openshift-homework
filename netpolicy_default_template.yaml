@@ -26,6 +26,6 @@
         path: template.yaml
         insertafter: "(?s)kind: Project.*?annotations:"
         line: |8-
-          net.beta.kubernetes.io/network-policy={"ingress":{"isolation":"DefaultDeny"}}
+          net.beta.kubernetes.io/network-policy='{"ingress":{"isolation":"DefaultDeny"}}'
   vars:
     ansible_connection: local
