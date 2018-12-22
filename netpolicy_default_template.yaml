@@ -4,6 +4,11 @@
   tasks:
     - name: get bootstrap template
       shell: oc adm create-bootstrap-project-template -o yaml > template.yaml
+    - name: add default annotation to deny all
+      lineinfile:
+        path: template.yaml
+        insertafter: '(?s)kind: Project.*?annotations:'
+        line: "          net.beta.kubernetes.io/network-policy='{\"ingress\":{\"isolation\":\"DefaultDeny\"}}'"
     - name: add network policy items to the template
       lineinfile:
         path: template.yaml
@@ -21,11 +26,5 @@
                 - namespaceSelector:
                     matchLabels:
                       name: default
-    - name: add default annotation to deny all
-      lineinfile:
-        path: template.yaml
-        insertafter: '(?s)kind: Project.*?annotations:'
-        line: |8
-          net.beta.kubernetes.io/network-policy='{"ingress":{"isolation":"DefaultDeny"}}'
   vars:
     ansible_connection: local
