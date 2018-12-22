@@ -8,8 +8,7 @@
       lineinfile:
         path: template.yaml
         insertbefore: "parameters:"
-        line: |
-            objects:
+        line: |-
             - apiVersion: networking.k8s.io/v1
               kind: NetworkPolicy
               metadata:
