@@ -1,5 +1,1 @@
-APPLICATION_NAME=tasks
 NAMESPACE=tasks-prod
-SA_NAMESPACE=tasks-build
-READINESS_RESPONSE=status.:.UP
-READINESS_PATH=/health

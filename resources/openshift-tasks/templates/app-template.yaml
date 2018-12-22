@@ -41,40 +41,6 @@ objects:
     to:
       name: ${APPLICATION_NAME}
 - apiVersion: v1
-  kind: BuildConfig
-  metadata:
-    labels:
-      application: ${APPLICATION_NAME}
-    name: ${APPLICATION_NAME}
-  spec:
-    output:
-      to:
-        kind: ImageStreamTag
-        name: ${APPLICATION_NAME}:latest
-    source:
-      git:
-        ref: ${SOURCE_REF}
-        uri: ${SOURCE_URL}
-      type: Git
-    strategy:
-      sourceStrategy:
-        forcePull: true
-        from:
-          kind: ImageStreamTag
-          name: jboss-eap64-openshift:latest
-          namespace: openshift
-      type: Source
-    triggers:
-    - github:
-        secret: kJZLvfQr3hZg
-      type: GitHub
-    - generic:
-        secret: kJZLvfQr3hZg
-      type: Generic
-    - imageChange: {}
-      type: ImageChange
-    - type: ConfigChange
-- apiVersion: v1
   kind: DeploymentConfig
   metadata:
     labels:
@@ -162,18 +128,38 @@ objects:
           name: ${APPLICATION_NAME}
       type: ImageChange
     - type: ConfigChange
+- apiVersion: v1
+  groupNames: null
+  kind: RoleBinding
+  metadata:
+    creationTimestamp: null
+    labels:
+      template: basic-tomcat-template
+    name: jenkins_edit
+    namespace: ${NAMESPACE}
+  roleRef:
+    name: edit
+  subjects:
+  - kind: ServiceAccount
+    name: ${SA_NAME}
+    namespace: ${SA_NAMESPACE}
+  userNames:
+  - system:serviceaccount:${SA_NAMESPACE}:${SA_NAME}
 parameters:
 - description: The name for the application.
   name: APPLICATION_NAME
   required: true
+  value: tasks
 - description: The namespace for the application.
   name: NAMESPACE
   required: true
-- description: WIP Name of a service account that can deploy to this project
+- description: Name of a service account that can deploy to this project
   name: SA_NAME
-- description: WIP Namespace of service account that can deploy to this project
+  value: jenkins
+- description: Namespace of service account that can deploy to this project
   name: SA_NAMESPACE
-  required: false
+  required: true
+  value: tasks-build
 - description: WIP String value expected back from readiness check
   name: READINESS_RESPONSE
   required: false
