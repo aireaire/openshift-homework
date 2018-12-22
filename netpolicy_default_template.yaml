@@ -1,0 +1,27 @@
+---
+- name: Update default template
+  hosts: localhost
+  tasks:
+    - name: get bootstrap template
+      shell: oc adm create-bootstrap-project-template -o yaml > template.yaml
+    - name: add network policy items to the template
+      lineinfile:
+        path: template.yaml
+        insertafter: EOF
+        line: |
+          objects:
+          - apiVersion: networking.k8s.io/v1
+            kind: NetworkPolicy
+            metadata:
+              name: allow-same-and-default-namespace
+            spec:
+              ingress:
+              - from:
+                - podSelector: {}
+              - from:
+                - namespaceSelector:
+                    matchLabels:
+                      name: default
+
+  vars:
+  ansible_connection: local
