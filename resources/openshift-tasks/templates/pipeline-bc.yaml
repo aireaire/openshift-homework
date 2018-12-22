@@ -18,7 +18,7 @@ objects:
     labels:
       name: ${APPLICATION_NAME}-pipeline
     name: ${APPLICATION_NAME}-pipeline
-    namespace: ${NAMESPACE}
+    # namespace: ${NAMESPACE}
   spec:
     source:
       type: Git
@@ -49,7 +49,7 @@ objects:
     labels:
       application: ${APPLICATION_NAME}
     name: ${APPLICATION_NAME}
-    namespace: ${NAMESPACE}
+    # namespace: ${NAMESPACE}
   spec:
     output:
       to:
