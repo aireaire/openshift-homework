@@ -13,35 +13,37 @@
           templateNamespace: openshift
           templateName: jenkins-persistent
           serviceName: jenkins-persistent-svc
+  - name: restart control-plane pods
+    shell: /usr/local/bin/master-restart api; /usr/local/bin/master-restart controllers
 
 - name: Deploy and Execute CICD workflow
   hosts: localhost
   tasks:
-    - name: Setup CICD for openshift-tasks
-      include_role:
-        name: openshift-applier
-      vars:
-        openshift_cluster_content:
-        - object: projects
-          content:
-          - name: Create environments
-            file: resources/openshift-tasks/projects/projects.yml
-            action: create
-        - object: builds
-          content:
-          - name: deploy build pipeline to dev
-            template: resources/openshift-tasks/templates/pipeline-bc.yaml
-            params: resources/openshift-tasks/params/build-dev
-        - object: deployments
-          content:
-          - name: deploy dev environment
-            template: resources/openshift-tasks/templates/app-template.yaml
-            params: resources/openshift-tasks/params/deployment-dev
-          - name: deploy test environment
-            template: resources/openshift-tasks/templates/app-template.yaml
-            params: resources/openshift-tasks/params/deployment-test
-          - name: deploy prod environment
-            template: resources/openshift-tasks/templates/app-template.yaml
-            params: resources/openshift-tasks/params/deployment-prod
+  - name: Setup CICD for openshift-tasks
+    include_role:
+      name: openshift-applier
+    vars:
+      openshift_cluster_content:
+      - object: projects
+        content:
+        - name: Create environments
+          file: resources/openshift-tasks/projects/projects.yml
+          action: create
+      - object: builds
+        content:
+        - name: deploy build pipeline to dev
+          template: resources/openshift-tasks/templates/pipeline-bc.yaml
+          params: resources/openshift-tasks/params/build-dev
+      - object: deployments
+        content:
+        - name: deploy dev environment
+          template: resources/openshift-tasks/templates/app-template.yaml
+          params: resources/openshift-tasks/params/deployment-dev
+        - name: deploy test environment
+          template: resources/openshift-tasks/templates/app-template.yaml
+          params: resources/openshift-tasks/params/deployment-test
+        - name: deploy prod environment
+          template: resources/openshift-tasks/templates/app-template.yaml
+          params: resources/openshift-tasks/params/deployment-prod
   vars:
     ansible_connection: local
