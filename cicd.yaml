@@ -2,8 +2,7 @@
 - name: configure jenkins-persistent
   hosts: masters
     blockinfile:
-      path: 1-master-config.yaml
-      # regexp: 'jenkinsPipelineConfig:\s*\n(^\s+.*\n)+'
+      path: /etc/origin/master/master-config.yaml
       marker_begin: 'BEGIN: Set jenkins-persistent for pipeline build strategy using'
       marker_end: 'END: Set jenkins-persistent for pipeline build strategy using'
       block: |-
@@ -44,4 +43,3 @@
             params: resources/openshift-tasks/params/deployment-prod
   vars:
     ansible_connection: local
-

@@ -345,6 +345,17 @@ The CICD workflow is configured by `cicd.yaml` playbook that uses templates in `
 __*openshift-applier*__ role.
 
 - #### Jenkins pod is running with a persistent volume
+The `cicd.yaml` playbook updates master configuration to use **jenkins-persistent** template when creating pod for
+Jenkins Pipeline Build Strategy.
+
+Following block is added to the `/etc/origin/master/master-config.yaml` on master nodes:
+```yaml
+jenkinsPipelineConfig:
+  autoProvisionEnabled: true
+  templateNamespace: openshift
+  templateName: jenkins-persistent
+  serviceName: jenkins-persistent-svc
+```
 
 - #### Jenkins deploys openshift-tasks app
 
