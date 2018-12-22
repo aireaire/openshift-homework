@@ -4,12 +4,12 @@
   tasks:
     - name: get bootstrap-project template
       shell: oc adm create-bootstrap-project-template -o yaml > template.yaml
-    - name: add default annotation to deny all
+    - name: add default annotation to deny all traffic to in project
       replace:
         path: template.yaml
         regexp: '(kind: Project\s*\n\s*metadata:\s*\n\s*annotations:)'
         replace: '\1\n      net.beta.kubernetes.io/network-policy: ''{"ingress":{"isolation":"DefaultDeny"}}'''
-    - name: add network policy items to the template
+    - name: add network-policy to allow project internal communication between pods
       lineinfile:
         path: template.yaml
         insertbefore: "parameters:"
@@ -26,7 +26,7 @@
                 - namespaceSelector:
                     matchLabels:
                       name: default
-    - name: create project-request template
+    - name: create new project-request template in 'default' namespace
       include_role:
         name: openshift-applier
       vars:
@@ -43,4 +43,10 @@
 - name: Update master-config on all master nodes
   hosts: masters
   tasks:
-    - name: set
+    - name: point project-request template to 'default/project-request' template
+      lineinfile:
+        path: /etc/origin/master/master-config.yaml
+        regexp: "projectRequestTemplate"
+        line: "  projectRequestTemplate: \"default/project-request\""
+    - name: restart control-plane pods
+      shell: /usr/local/bin/master-restart api; /usr/local/bin/master-restart controllers
