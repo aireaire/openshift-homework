@@ -1,4 +1,18 @@
 ---
+- name: configure jenkins-persistent
+  hosts: masters
+    blockinfile:
+      path: 1-master-config.yaml
+      # regexp: 'jenkinsPipelineConfig:\s*\n(^\s+.*\n)+'
+      marker_begin: 'BEGIN: Set jenkins-persistent for pipeline build strategy using'
+      marker_end: 'END: Set jenkins-persistent for pipeline build strategy using'
+      block: |-
+        jenkinsPipelineConfig:
+          autoProvisionEnabled: true
+          templateNamespace: openshift
+          templateName: jenkins-persistent
+          serviceName: jenkins-persistent-svc
+
 - name: Deploy and Execute CICD workflow
   hosts: localhost
   tasks:

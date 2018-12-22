@@ -7,13 +7,13 @@
     - name: add default annotation to deny all traffic to in project
       replace:
         path: template.yaml
-        regexp: '(kind: Project\s*\n\s*metadata:\s*\n\s*annotations:)'
-        replace: '\1\n      net.beta.kubernetes.io/network-policy: ''{"ingress":{"isolation":"DefaultDeny"}}'''
+        regexp: '(kind: Project\s*\n\s*metadata:\s*\n\s*annotations:\s*\n)((^\s+\S*\n)*)(?!net.beta.kubernetes.io/network-policy)(.*\n)'
+        replace: '\1      net.beta.kubernetes.io/network-policy: ''{"ingress":{"isolation":"DefaultDeny"}}''\n\2'
     - name: add network-policy to allow project internal communication between pods
-      lineinfile:
-        path: template.yaml
+      blockinfile:
+        path: 1_bootstrap_template.yaml
         insertbefore: "parameters:"
-        line: |-
+        block: |-
           - apiVersion: networking.k8s.io/v1
             kind: NetworkPolicy
             metadata:

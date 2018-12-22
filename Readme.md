@@ -531,6 +531,7 @@ The `${GUID}` variable is copied from main playbook's `{{ GUID }}` group variabl
 Now, to ensure pods are created on appropriate node each project has been added `openshift.io/node-selector` annotation
 with appropriate label. See `annotations:` property of namespaces in [the previous subsection](#multiple-clientscustomers-created)
 - #### The new project template is modified so that it includes a LimitRange
+The `netpolicy_default_template.yaml` playbook creates cluster-wide configuration to use new project request template
 
 - #### A new user template is used to create a user object with the specific label value
 
