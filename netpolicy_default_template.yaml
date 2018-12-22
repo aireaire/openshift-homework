@@ -2,7 +2,7 @@
 - name: Update default template
   hosts: localhost
   tasks:
-    - name: get bootstrap template
+    - name: get bootstrap-project template
       shell: oc adm create-bootstrap-project-template -o yaml > template.yaml
     - name: add default annotation to deny all
       replace:
@@ -26,5 +26,21 @@
                 - namespaceSelector:
                     matchLabels:
                       name: default
+    - name: create project-request template
+      include_role:
+        name: openshift-applier
+      vars:
+        openshift_cluster_content:
+        - object: project-request template
+          content:
+          - name: create project-request template
+            file: template.yaml
+            action: create
+            namespace: default
   vars:
     ansible_connection: local
+
+- name: Update master-config on all master nodes
+  hosts: masters
+  tasks:
+    - name: set
