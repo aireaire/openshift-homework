@@ -22,6 +22,5 @@
                 - namespaceSelector:
                     matchLabels:
                       name: default
-
   vars:
-  ansible_connection: local
+    ansible_connection: local
