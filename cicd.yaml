@@ -12,7 +12,7 @@
           autoProvisionEnabled: true
           templateNamespace: openshift
           templateName: jenkins-persistent
-          serviceName: jenkins-persistent-svc
+          serviceName: jenkins
   - name: restart control-plane pods
     shell: /usr/local/bin/master-restart api; /usr/local/bin/master-restart controllers
 
