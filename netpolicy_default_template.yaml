@@ -8,18 +8,18 @@
       lineinfile:
         path: template.yaml
         insertbefore: "parameters:"
-        line: |-
-            - apiVersion: networking.k8s.io/v1
-              kind: NetworkPolicy
-              metadata:
-                name: allow-same-and-default-namespace
-              spec:
-                ingress:
-                - from:
-                  - podSelector: {}
-                - from:
-                  - namespaceSelector:
-                      matchLabels:
-                        name: default
+        line: |
+          - apiVersion: networking.k8s.io/v1
+            kind: NetworkPolicy
+            metadata:
+              name: allow-same-and-default-namespace
+            spec:
+              ingress:
+              - from:
+                - podSelector: {}
+              - from:
+                - namespaceSelector:
+                    matchLabels:
+                      name: default
   vars:
     ansible_connection: local
