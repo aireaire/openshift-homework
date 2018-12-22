@@ -39,5 +39,8 @@
 - name: CICD for openshift-tasks
   import_playbook: cicd.yaml
 
+- name: Multitenancy/isolate projects
+  import_playbook: netpolicy_default_template.yaml
+
 - name: Multitenancy
   import_playbook: multitenant.yaml
