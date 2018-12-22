@@ -166,6 +166,15 @@ parameters:
 - description: The name for the application.
   name: APPLICATION_NAME
   required: true
-- description: The name for the application.
+- description: The namespace for the application.
   name: NAMESPACE
   required: true
+- description: WIP Name of a service account that can deploy to this project
+  name: SA_NAMESPACE
+  required: false
+- description: WIP String value expected back from readiness check
+  name: READINESS_RESPONSE
+  required: false
+- description: WIP URI to check for app health
+  name: READINESS_PATH
+  required: false
