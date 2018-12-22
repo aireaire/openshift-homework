@@ -7,10 +7,8 @@
     - name: add default annotation to deny all
       replace:
         path: template.yaml
-        after: '(?s)kind: Project.*?annotations:\s*?$'
-        regexp: ''
-        replace: |
-                  net.beta.kubernetes.io/network-policy='{\"ingress\":{\"isolation\":\"DefaultDeny\"}}'
+        regexp: '(kind: Project\s*\n\s*metadata:\s*\n\s*annotations:)'
+        replace: '\1\n      net.beta.kubernetes.io/network-policy: ''{"ingress":{"isolation":"DefaultDeny"}}'''
     - name: add network policy items to the template
       lineinfile:
         path: template.yaml
