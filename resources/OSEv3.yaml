@@ -83,7 +83,7 @@ openshift_additional_registry_credentials:
   - host: 'registry.redhat.io'
     user: "{{ OREG_AUTH_USER }}"
     password: "{{ OREG_AUTH_PASS }}"
-    test_image: 'maven'
+    test_image: 'openshift3/jenkins-agent-maven-35-rhel7'
 
 openshift_examples_modify_imagestreams: true
 
