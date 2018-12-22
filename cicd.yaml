@@ -2,6 +2,7 @@
 - name: configure jenkins-persistent
   hosts: masters
   tasks:
+  - name: configure jenkins-persistent
     blockinfile:
       path: /etc/origin/master/master-config.yaml
       marker_begin: 'BEGIN: Set jenkins-persistent for pipeline build strategy using'
