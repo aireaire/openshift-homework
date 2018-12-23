@@ -16,6 +16,7 @@
           content:
           - name: label nodes dedicated to each customer
             template: resources/multitenant/templates/node_labels.yaml
+            params: resources/multitenant/params/nodes
             params_from_vars:
               GUID: "{{ GUID }}"
         # - object: network policies

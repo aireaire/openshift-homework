@@ -43,4 +43,6 @@
   import_playbook: project_default_template.yaml
 
 - name: Multitenancy
+  vars:
+    GUID: "{{ GUID }}"
   import_playbook: multitenant.yaml
