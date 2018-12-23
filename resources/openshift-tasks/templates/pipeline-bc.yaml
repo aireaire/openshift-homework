@@ -28,12 +28,70 @@ objects:
     strategy:
       jenkinsPipelineStrategy:
         jenkinsfile: |-
-          node('maven') {
-              stage 'build'
-              openshiftBuild(buildConfig: '${APPLICATION_NAME}', showBuildLogs: 'true')
+          openshift.withCluster() {
+              env.NAMESPACE = openshift.project()
+              env.POM_FILE = env.BUILD_CONTEXT_DIR ? "${env.BUILD_CONTEXT_DIR}/pom.xml" : "pom.xml"
+              env.APP_NAME = "${JOB_NAME}".replaceAll(/-build.*/, '')
+              echo "Starting Pipeline for ${APP_NAME}..."
+              env.BUILD = "${env.NAMESPACE}"
+              env.DEV = "${APP_NAME}-dev"
+              env.STAGE = "${APP_NAME}-stage"
+              env.PROD = "${APP_NAME}-prod"
+          }
+          pipeline {
+              agent {
+                  label 'maven'
+              }
 
-              stage 'deploy'
-              openshiftDeploy(deploymentConfig: '${APPLICATION_NAME}')
+              stage('build') {
+                steps {
+                  openshiftBuild(buildConfig: '${APPLICATION_NAME}', showBuildLogs: 'true')
+                }
+              }
+
+              stage('Promote from Build to Dev') {
+                steps {
+                  tagImage(sourceImageName: env.APP_NAME, sourceImagePath: env.BUILD, toImagePath: env.DEV)
+                }
+              }
+
+              stage ('Verify Deployment to Dev') {
+                steps {
+                  verifyDeployment(projectName: env.DEV, targetApp: env.APP_NAME)
+                }
+              }
+
+              stage('Promote from Dev to Stage') {
+                steps {
+                  tagImage(sourceImageName: env.APP_NAME, sourceImagePath: env.DEV, toImagePath: env.STAGE)
+                }
+              }
+
+              stage ('Verify Deployment to Stage') {
+                steps {
+                  verifyDeployment(projectName: env.STAGE, targetApp: env.APP_NAME)
+                }
+              }
+
+              stage('Promotion gate') {
+                steps {
+                  script {
+                    input message: 'Promote application to Production?'
+                  }
+                }
+              }
+
+              stage('Promote from Stage to Prod') {
+                steps {
+                  tagImage(sourceImageName: env.APP_NAME, sourceImagePath: env.STAGE, toImagePath: env.PROD)
+                }
+              }
+
+              stage ('Verify Deployment to Prod') {
+                steps {
+                  verifyDeployment(projectName: env.PROD, targetApp: env.APP_NAME)
+                }
+              }
           }
       type: JenkinsPipeline
     triggers:
