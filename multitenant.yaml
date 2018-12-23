@@ -4,7 +4,7 @@
   tasks:
     - name: prepare parameter for node labelling
       lineinfile:
-        path: resources/multitenant/parames/nodes
+        path: resources/multitenant/params/nodes
         regexp: 'GUID=.*$'
         line: "GUID={{GUID}}"
     - name: Deploy 2 customers Alpha Corp and Beta Corp
