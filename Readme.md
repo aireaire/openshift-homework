@@ -364,6 +364,12 @@ jenkinsPipelineConfig:
 - #### HPA is configured and working on production deployment of openshift-tasks
 
 ## Multitenancy
+Two playbooks create Multitenant setup.
+
+The `project_default_template.yaml` creates new template for project requests with following defaults
+- project annotation to deny all traffic
+- network policy to allow connections between pods ins
+
 The `multitenant.yaml` playbook uses __*openshift-applier*__ role to create multitenancy setup from
 templates in `resources/multitenant` directory.
 
@@ -450,8 +456,57 @@ The template also defines relevant groups and users for each namespace:
 ...
 ```
 
-To allow the users effectively use their projects corresponding role bindings are defined within appropriate
-namespaces:
+- #### Dedicated node for each Client
+The `resources/multitenant/templates/node_labels.yaml` template defines labels on compute nodes so that those can
+be dedicated to specific client.
+
+- node1.$GUID.internal labeled with `client: alpha`
+- node2.$GUID.internal labeled with `client: beta`
+- node3.$GUID.internal labeled with `client: common`
+
+The template is applied with __*openshift-applier*__ role.
+```yaml
+# resources/multitenant/templates/node_labels.yaml file
+
+apiVersion: v1
+kind: Template
+labels:
+  template: label_customer_nodes
+metadata:
+  name: label nodes dedicated to customers
+objects:
+- apiVersion: v1
+  kind: Node
+  metadata:
+    labels:
+      client: alpha
+    name: "node1.${GUID}.internal"
+- apiVersion: v1
+  kind: Node
+  metadata:
+    labels:
+      client: beta
+    name: "node2.${GUID}.internal"
+- apiVersion: v1
+  kind: Node
+  metadata:
+    labels:
+      client: common
+    name: "node3.${GUID}.internal"
+parameters:
+- description: Environmnet ID for OpenShift Homework
+  name: GUID
+  required: true
+```
+NOTE: The `${GUID}` variable is copied from main playbook's `{{ GUID }}` group variable.
+
+- #### The new project template is modified so that it includes a LimitRange
+The `project_default_template.yaml` playbook creates cluster-wide configuration to use new project request template
+
+- #### A new user template is used to create a user object with the specific label value
+
+- #### Alpha and Beta Corp users are confined to projects, and all new pods are deployed to customer dedicated nodes
+To allow the users effectively use their projects role bindings are defined.
 ```yaml
 # fragment from resources/multitenant/templates/projects.yaml file
 ...
@@ -496,54 +551,6 @@ namespaces:
   userNames: null
 ```
 
-- #### Dedicated node for each Client
-The `node labels` __*openshift-applier*__ object applies `resources/multitenant/templates/node_labels.yaml` template
-to label nodes according to related clients:
-
-- node1.$GUID.internal labeled with `client: alpha`
-- node2.$GUID.internal labeled with `client: beta`
-- node3.$GUID.internal labeled with `client: common`
-
-```yaml
-# resources/multitenant/templates/node_labels.yaml file
-
-apiVersion: v1
-kind: Template
-labels:
-  template: label_customer_nodes
-metadata:
-  name: label nodes dedicated to customers
-objects:
-- apiVersion: v1
-  kind: Node
-  metadata:
-    labels:
-      client: alpha
-    name: "node1.${GUID}.internal"
-- apiVersion: v1
-  kind: Node
-  metadata:
-    labels:
-      client: beta
-    name: "node2.${GUID}.internal"
-- apiVersion: v1
-  kind: Node
-  metadata:
-    labels:
-      client: common
-    name: "node3.${GUID}.internal"
-parameters:
-- description: Environmnet ID for OpenShift Homework
-  name: GUID
-  required: true
-```
-The `${GUID}` variable is copied from main playbook's `{{ GUID }}` group variable.
 
 Now, to ensure pods are created on appropriate node each project has been added `openshift.io/node-selector` annotation
 with appropriate label. See `annotations:` property of namespaces in [the previous subsection](#multiple-clientscustomers-created)
-- #### The new project template is modified so that it includes a LimitRange
-The `project_default_template.yaml` playbook creates cluster-wide configuration to use new project request template
-
-- #### A new user template is used to create a user object with the specific label value
-
-- #### Alpha and Beta Corp users are confined to projects, and all new pods are deployed to customer dedicated nodes

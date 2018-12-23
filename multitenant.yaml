@@ -18,14 +18,14 @@
             template: resources/multitenant/templates/node_labels.yaml
             params_from_vars:
               GUID: "{{ GUID }}"
-        - object: network policies
-          content:
-          - name: define network policies
-            description: |-
-              create a network policy for each project to allow
-              communication between project's pods
-            template: resources/multitenant/templates/netpolicy.yaml
-            action: create
+        # - object: network policies
+        #   content:
+        #   - name: define network policies
+        #     description: |-
+        #       create a network policy for each project to allow
+        #       communication between project's pods
+        #     template: resources/multitenant/templates/netpolicy.yaml
+        #     action: create
   vars:
     ansible_connection: local
 
