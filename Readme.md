@@ -2,8 +2,23 @@ Advanced Deployment with OpenShift - Homework Assignment
 =========================
 > by Aleksandrs Sins
 
-This is a homework documentation for ocp_advanced_deployment course. It is organized in the same way as
-requirements are defined in the assignment and describes how the requirements were fulfilled.
+This is a homework documentation for ocp_advanced_deployment course.
+The task of OpenShift cluster deployment is achieved using Ansible playbook that performs all the steps end-to-end.
+
+The structure of this document follows the list of requirements provided in the Homework Assignment and describes
+what exactly is done by the playbook to fulfill each requirement.
+
+<!-- MarkdownTOC -->
+
+- Installation
+- Prerequisites
+- Basic requirements
+- HA requirements
+- Environment configuration
+- CICD Workflow
+- Multitenancy
+
+<!-- /MarkdownTOC -->
 
 ## Installation
 1. Login to your bastion host as root
