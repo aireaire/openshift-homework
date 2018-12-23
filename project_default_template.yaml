@@ -20,6 +20,7 @@
             kind: NetworkPolicy
             metadata:
               name: allow-same-and-default-namespace
+              namespace: ${PROJECT_NAME}
             spec:
               ingress:
               - from:
