@@ -85,6 +85,19 @@
         line: "  projectRequestTemplate: \"default/project-request\""
       notify:
         - restart control-plane pods
+    - name: add users to htpasswd identity provider
+      htpasswd:
+        path: /etc/origin/master/htpasswd
+        name: amy
+        password: r3dh4t1!
+      htpasswd:
+        path: /etc/origin/master/htpasswd
+        name: brian
+        password: r3dh4t1!
+      htpasswd:
+        path: /etc/origin/master/htpasswd
+        name: betty
+        password: r3dh4t1!
   handlers:
     - name: restart control-plane pods
       shell: /usr/local/bin/master-restart api; /usr/local/bin/master-restart controllers
