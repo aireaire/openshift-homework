@@ -11,8 +11,10 @@
         replace: '\1      net.beta.kubernetes.io/network-policy: ''{"ingress":{"isolation":"DefaultDeny"}}''\n\2'
     - name: add network-policy to allow project internal communication between pods
       blockinfile:
-        path: 1_bootstrap_template.yaml
+        path: template.yaml
         insertbefore: "parameters:"
+        marker_begin: "BEGIN network policy to allow inter-project connections"
+        marker_end: "END network policy to allow inter-project connections"
         block: |-
           - apiVersion: networking.k8s.io/v1
             kind: NetworkPolicy
@@ -26,6 +28,38 @@
                 - namespaceSelector:
                     matchLabels:
                       name: default
+    - name: add limit-range for all new projects
+      blockinfile:
+        path: template.yaml
+        insertbefore: "parameters:"
+        marker_begin: "BEGIN defaul limit-range for all new projects"
+        marker_end: "END defaul limit-range for all new projects"
+        block: |-
+        - apiVersion: v1
+          kind: LimitRange
+          metadata:
+              name: limits
+              creationTimestamp: null
+          spec:
+              limits:
+              -   type: Pod
+                  max:
+                      cpu: 100m
+                      memory: 750Mi
+                  min:
+                      cpu: 10m
+                      memory: 5Mi
+              -   type: Container
+                  max:
+                      cpu: 100m
+                      memory: 750Mi
+                  min:
+                      cpu: 10m
+                      memory: 5Mi
+                  default:
+                      cpu: 50m
+                      memory: 100Mi
+
     - name: create new project-request template in 'default' namespace
       include_role:
         name: openshift-applier
