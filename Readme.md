@@ -366,11 +366,16 @@ jenkinsPipelineConfig:
 ## Multitenancy
 Two playbooks create Multitenant setup.
 
-The `project_default_template.yaml` creates new template for project requests with following defaults
+1. The `project_default_template.yaml` updates cluster-wide settings to:
+- add users to HTPasswd identity provider
+- sets custom project-requests template
+
+The project-requests template provides following extra settings for new projects:
 - project annotation to deny all traffic
 - network policy to allow connections between pods ins
 
-The `multitenant.yaml` playbook uses __*openshift-applier*__ role to create multitenancy setup from
+
+2. The `multitenant.yaml` playbook uses __*openshift-applier*__ role to create multitenancy setup from
 templates in `resources/multitenant` directory.
 
 - #### Multiple clients/customers created
@@ -379,7 +384,7 @@ The `projects` __*openshift-applier*__  object creates 3 projects for customers 
   - beta-corp - for Beta Corp customer company
   - common - for other customers
 
-The fragment below is shows Namespace objects defined in the template:
+The fragment below has the details of Namespace objects:
 ```yaml
 # fragment from resources/multitenant/templates/projects.yaml file
 ...
@@ -464,7 +469,7 @@ be dedicated to specific client.
 - node2.$GUID.internal labeled with `client: beta`
 - node3.$GUID.internal labeled with `client: common`
 
-The template is applied with __*openshift-applier*__ role.
+Template details are below:
 ```yaml
 # resources/multitenant/templates/node_labels.yaml file
 
@@ -550,7 +555,5 @@ To allow the users effectively use their projects role bindings are defined.
     name: common
   userNames: null
 ```
-
-
 Now, to ensure pods are created on appropriate node each project has been added `openshift.io/node-selector` annotation
 with appropriate label. See `annotations:` property of namespaces in [the previous subsection](#multiple-clientscustomers-created)
