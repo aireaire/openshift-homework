@@ -17,8 +17,7 @@
           - name: label nodes dedicated to each customer
             template: resources/multitenant/templates/node_labels.yaml
             params_from_vars:
-              GUID: "{{ GUID }}"
-            params: resources/multitenant/params/nodes
+            - GUID: "{{ GUID }}"
   vars:
     ansible_connection: local
 
