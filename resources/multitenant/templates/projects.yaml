@@ -1,6 +1,7 @@
 apiVersion: v1
 kind: List
 items:
+# Alpha Corp project
 - kind: Namespace
   apiVersion: v1
   labels:
@@ -8,10 +9,10 @@ items:
   metadata:
     annotations:
       openshift.io/node-selector: client=alpha
-      # net.beta.kubernetes.io/network-policy: '{"ingress":{"isolation":"DefaultDeny"}}'
     name: alpha-corp
     creationTimestamp: null
   displayName: Alpha Corp
+# Beta Corp Project
 - kind: Namespace
   apiVersion: v1
   labels:
@@ -19,10 +20,10 @@ items:
   metadata:
     annotations:
       openshift.io/node-selector: client=beta
-      # net.beta.kubernetes.io/network-policy: '{"ingress":{"isolation":"DefaultDeny"}}'
     name: beta-corp
     creationTimestamp: null
   displayName: Beta Corp
+# Common project
 - kind: Namespace
   apiVersion: v1
   labels:
@@ -30,7 +31,6 @@ items:
   metadata:
     annotations:
       openshift.io/node-selector: client=common
-      # net.beta.kubernetes.io/network-policy: '{"ingress":{"isolation":"DefaultDeny"}}'
     name: common
     creationTimestamp: null
   displayName: Unspecified Customers

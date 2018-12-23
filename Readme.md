@@ -345,7 +345,7 @@ The CICD workflow is configured by `cicd.yaml` playbook that uses templates in `
 __*openshift-applier*__ role.
 
 - #### Jenkins pod is running with a persistent volume
-The `cicd.yaml` playbook updates master configuration to use **jenkins-persistent** template when creating pod for
+Master configuration is updated to use **jenkins-persistent** template when creating pod for
 Jenkins Pipeline Build Strategy.
 
 Following block is added to the `/etc/origin/master/master-config.yaml` on master nodes:
@@ -358,19 +358,63 @@ jenkinsPipelineConfig:
 ```
 
 - #### Jenkins deploys openshift-tasks app
+The playbook creates a project for Jenkins CICD named `tasks-build` and the pipeline is defined
+in `resources/openshift-tasks/templates/pipeline-bc.yaml` template.
+
+CICD is organized in a way that Jenkins pipeline propagates successful builds to staging projects
+`tasks-dev`, `tasks-test` and `tasks-prod`.
 
 - #### Jenkins OpenShift plugin is used to create a CICD workflow
+The following fragment in `resources/openshift-tasks/templates/pipeline-bc.yaml` template allows automated
+pipeline creation by Jenkins OpenShift plugin in the `tasks-build` namespace:
 
+```yaml
+# This is a fragment of resources/openshift-tasks/templates/pipeline-bc.yaml
+
+...
+
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      pipeline.alpha.openshift.io/uses: '[{"name": "${APPLICATION_NAME}", "namespace": "", "kind": "DeploymentConfig"}]'
+    labels:
+      name: ${APPLICATION_NAME}-pipeline
+    name: ${APPLICATION_NAME}-pipeline
+    namespace: ${NAMESPACE}
+  spec:
+    source:
+      type: Git
+      git:
+        uri: ${SOURCE_URL}
+        ref: ${SOURCE_REF}
+    strategy:
+      jenkinsPipelineStrategy:
+        jenkinsfile: |-
+          openshift.withCluster() {
+              env.NAMESPACE = openshift.project()
+              env.POM_FILE = env.BUILD_CONTEXT_DIR ? "${env.BUILD_CONTEXT_DIR}/pom.xml" : "pom.xml"
+              env.APP_NAME = "${JOB_NAME}".replaceAll(/-build.*/, '')
+              echo "Starting Pipeline for ${APP_NAME}..."
+              env.BUILD = "${env.NAMESPACE}"
+              env.DEV = "${APP_NAME}-dev"
+              env.STAGE = "${APP_NAME}-stage"
+              env.PROD = "${APP_NAME}-prod"
+          }
+          ...
+
+```
 - #### HPA is configured and working on production deployment of openshift-tasks
 
 ## Multitenancy
 Two playbooks create Multitenant setup.
 
 1. The `project_default_template.yaml` updates cluster-wide settings to:
-- add users to HTPasswd identity provider
-- sets custom project-requests template
+- add users *amy* *betty* and *brian* to HTPasswd identity provider on all master nodes
+- set ProjectRequestTemplate to 'default/project-requests'
+- creates `project-requests` template in the `default` namespace
 
-The project-requests template provides following extra settings for new projects:
+The `project-requests` template provides following extra settings for new projects:
 - project annotation to deny all traffic
 - network policy to allow connections between pods ins
 
@@ -388,6 +432,7 @@ The fragment below has the details of Namespace objects:
 ```yaml
 # fragment from resources/multitenant/templates/projects.yaml file
 ...
+# Alpha Corp project
 - kind: Namespace
   apiVersion: v1
   labels:
@@ -395,10 +440,10 @@ The fragment below has the details of Namespace objects:
   metadata:
     annotations:
       openshift.io/node-selector: client=alpha
-      net.beta.kubernetes.io/network-policy: '{"ingress":{"isolation":"DefaultDeny"}}'
     name: alpha-corp
     creationTimestamp: null
   displayName: Alpha Corp
+# Beta Corp Project
 - kind: Namespace
   apiVersion: v1
   labels:
@@ -406,10 +451,10 @@ The fragment below has the details of Namespace objects:
   metadata:
     annotations:
       openshift.io/node-selector: client=beta
-      net.beta.kubernetes.io/network-policy: '{"ingress":{"isolation":"DefaultDeny"}}'
     name: beta-corp
     creationTimestamp: null
   displayName: Beta Corp
+# Common project
 - kind: Namespace
   apiVersion: v1
   labels:
@@ -417,14 +462,13 @@ The fragment below has the details of Namespace objects:
   metadata:
     annotations:
       openshift.io/node-selector: client=common
-      net.beta.kubernetes.io/network-policy: '{"ingress":{"isolation":"DefaultDeny"}}'
     name: common
     creationTimestamp: null
   displayName: Unspecified Customers
 ...
 ```
 
-The template also defines relevant groups and users for each namespace:
+Users and groups are created in the same template:
 ```yaml
 # fragment from resources/multitenant/templates/projects.yaml file
 ...

@@ -29,15 +29,15 @@
       openshift_cluster_content:
       - object: projects
         content:
-        - name: Create environments
+        - name: Create projects
           file: resources/openshift-tasks/projects/projects.yml
           action: create
-      - object: builds
+      - object: Build Pipeline
         content:
-        - name: deploy build pipeline to dev
+        - name: deploy build pipeline in tasks-build project
           template: resources/openshift-tasks/templates/pipeline-bc.yaml
           params: resources/openshift-tasks/params/build-dev
-      - object: deployments
+      - object: Deployments
         content:
         - name: deploy dev environment
           template: resources/openshift-tasks/templates/app-template.yaml
@@ -48,5 +48,8 @@
         - name: deploy prod environment
           template: resources/openshift-tasks/templates/app-template.yaml
           params: resources/openshift-tasks/params/deployment-prod
+      - object: Autoscaler
+        - name: setup autoscaler for tasks-prod projects
+          file: resources/openshift-tasks/templates/tasks-prod-hpa.yaml
   vars:
     ansible_connection: local
