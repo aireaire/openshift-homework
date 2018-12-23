@@ -49,6 +49,7 @@
           template: resources/openshift-tasks/templates/app-template.yaml
           params: resources/openshift-tasks/params/deployment-prod
       - object: Autoscaler
+        content:
         - name: setup autoscaler for tasks-prod projects
           file: resources/openshift-tasks/templates/tasks-prod-hpa.yaml
   vars:
