@@ -405,6 +405,7 @@ pipeline creation by Jenkins OpenShift plugin in the `tasks-build` namespace:
 
 ```
 - #### HPA is configured and working on production deployment of openshift-tasks
+HPA in `tasks-prod` project is created from `resources/openshift-tasks/templates/tasks-prod-hpa.yaml` template
 
 ## Multitenancy
 Two playbooks create Multitenant setup.
