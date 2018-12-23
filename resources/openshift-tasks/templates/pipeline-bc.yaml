@@ -114,7 +114,7 @@ objects:
     output:
       to:
         kind: ImageStreamTag
-        name: ${APPLICATION_NAME}:latest
+        name: '${APPLICATION_NAME}:latest'
     source:
       git:
         ref: ${SOURCE_REF}
