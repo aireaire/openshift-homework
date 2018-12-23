@@ -1,24 +1,15 @@
-apiVersion: v1
-kind: Template
-labels:
-  template: hpa-tasks
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
 metadata:
-  annotations:
-    description: Autoscaler for tasks-prod project
-  name: hpa-tasks
-objects:
-- apiVersion: autoscaling/v1
-  kind: HorizontalPodAutoscaler
-  metadata:
-    creationTimestamp: 2018-12-23T15:01:26Z
+  creationTimestamp: 2018-12-23T15:01:26Z
+  name: tasks
+  namespace: tasks-prod
+  selfLink: /apis/autoscaling/v1/namespaces/tasks-prod/horizontalpodautoscalers/tasks
+spec:
+  maxReplicas: 5
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps.openshift.io/v1
+    kind: DeploymentConfig
     name: tasks
-    namespace: tasks-prod
-    selfLink: /apis/autoscaling/v1/namespaces/tasks-prod/horizontalpodautoscalers/tasks
-  spec:
-    maxReplicas: 5
-    minReplicas: 1
-    scaleTargetRef:
-      apiVersion: apps.openshift.io/v1
-      kind: DeploymentConfig
-      name: tasks
-    targetCPUUtilizationPercentage: 80
+  targetCPUUtilizationPercentage: 80

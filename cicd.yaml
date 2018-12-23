@@ -52,5 +52,6 @@
         content:
         - name: setup autoscaler for tasks-prod projects
           file: resources/openshift-tasks/templates/tasks-prod-hpa.yaml
+          namespace: tasks-prod
   vars:
     ansible_connection: local
