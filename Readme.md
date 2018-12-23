@@ -8,17 +8,11 @@ The task of OpenShift cluster deployment is achieved using Ansible playbook that
 The structure of this document follows the list of requirements provided in the Homework Assignment and describes
 what exactly is done by the playbook to fulfill each requirement.
 
-<!-- MarkdownTOC -->
-
-- Installation
-- Prerequisites
-- Basic requirements
-- HA requirements
-- Environment configuration
-- CICD Workflow
-- Multitenancy
-
-<!-- /MarkdownTOC -->
++ [Basic requirements](#basic-requirements)
++ [HA requirements](#ha-requirements)
++ [Environment configuration](#environment-configuration)
++ [CICD workflow](#cicd-workflow)
++ [Multitenancy](#multitenancy)
 
 ## Installation
 1. Login to your bastion host as root
