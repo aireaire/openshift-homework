@@ -35,30 +35,30 @@
         marker_begin: "BEGIN defaul limit-range for all new projects"
         marker_end: "END defaul limit-range for all new projects"
         block: |-
-        - apiVersion: v1
-          kind: LimitRange
-          metadata:
-              name: limits
-              creationTimestamp: null
-          spec:
-              limits:
-              -   type: Pod
-                  max:
-                      cpu: 100m
-                      memory: 750Mi
-                  min:
-                      cpu: 10m
-                      memory: 5Mi
-              -   type: Container
-                  max:
-                      cpu: 100m
-                      memory: 750Mi
-                  min:
-                      cpu: 10m
-                      memory: 5Mi
-                  default:
-                      cpu: 50m
-                      memory: 100Mi
+          - apiVersion: v1
+            kind: LimitRange
+            metadata:
+                name: limits
+                creationTimestamp: null
+            spec:
+                limits:
+                -   type: Pod
+                    max:
+                        cpu: 100m
+                        memory: 750Mi
+                    min:
+                        cpu: 10m
+                        memory: 5Mi
+                -   type: Container
+                    max:
+                        cpu: 100m
+                        memory: 750Mi
+                    min:
+                        cpu: 10m
+                        memory: 5Mi
+                    default:
+                        cpu: 50m
+                        memory: 100Mi
 
     - name: create new project-request template in 'default' namespace
       include_role:
@@ -82,5 +82,8 @@
         path: /etc/origin/master/master-config.yaml
         regexp: "projectRequestTemplate"
         line: "  projectRequestTemplate: \"default/project-request\""
+      notify:
+        - restart control-plane pods
+  handlers:
     - name: restart control-plane pods
       shell: /usr/local/bin/master-restart api; /usr/local/bin/master-restart controllers

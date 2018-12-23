@@ -39,7 +39,7 @@
 - name: CICD for openshift-tasks
   import_playbook: cicd.yaml
 
-- name: Multitenancy/isolate projects
+- name: Multitenancy - isolate projects, set default limitrange
   import_playbook: project_default_template.yaml
 
 - name: Multitenancy

@@ -13,6 +13,9 @@
           templateNamespace: openshift
           templateName: jenkins-persistent
           serviceName: jenkins
+    notify:
+      - restart control-plane pods
+  handlers:
   - name: restart control-plane pods
     shell: /usr/local/bin/master-restart api; /usr/local/bin/master-restart controllers
 
