@@ -2,6 +2,11 @@
 - name: Deploy multitenant environments
   hosts: localhost
   tasks:
+    - name: prepare parameter for node labelling
+      lineinfile:
+        path: resources/multitenant/parames/nodes
+        regexp: 'GUID=.*$'
+        line: "GUID={{GUID}}"
     - name: Deploy 2 customers Alpha Corp and Beta Corp
       include_role:
         name: openshift-applier
@@ -16,8 +21,7 @@
           content:
           - name: label nodes dedicated to each customer
             template: resources/multitenant/templates/node_labels.yaml
-            params_from_vars:
-            - GUID: "{{ GUID }}"
+            params: resources/multitenant/params/nodes
   vars:
     ansible_connection: local
 
