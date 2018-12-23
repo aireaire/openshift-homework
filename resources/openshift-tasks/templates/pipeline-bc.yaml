@@ -46,7 +46,7 @@ objects:
               stages{
                   stage('build') {
                     steps {
-                      openshiftBuild(buildConfig: '${APPLICATION_NAME}', showBuildLogs: 'true')
+                      openshiftBuild(bldCfg: '${APPLICATION_NAME}', showBuildLogs: 'true')
                     }
                   }
 
